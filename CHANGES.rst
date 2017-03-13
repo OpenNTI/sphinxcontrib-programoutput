@@ -1,3 +1,9 @@
+Unreleased (2017)
+=================
+
+- Forked and revived the project in Gitub_
+
+
 0.8 (Oct 12, 2012)
 ==================
 
@@ -44,3 +50,5 @@
 ==================
 
 - Initial release
+
+.. _Github: https://github.com/NextThought/sphinxcontrib-programoutput

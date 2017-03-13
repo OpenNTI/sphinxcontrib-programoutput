@@ -9,6 +9,7 @@
 *.sublime-*
 .coverage
 .runtimes
+.idea
 htmlcov/
 bin/
 develop-eggs/

@@ -2,8 +2,8 @@
 sphinxcontrib-programoutput
 ###########################
 
-.. image:: https://secure.travis-ci.org/lunaryorn/sphinxcontrib-programoutput.png
-   :target: http://travis-ci.org/lunaryorn/sphinxcontrib-programoutput
+.. image:: https://secure.travis-ci.org/NextThought/sphinxcontrib-programoutput.png
+   :target: http://travis-ci.org/NextThought/sphinxcontrib-programoutput
 
 http://sphinxcontrib-programoutput.readthedocs.org
 
@@ -68,7 +68,7 @@ Development
 
 The source code is hosted on Github_::
 
-   git clone https://github.com/lunaryorn/sphinxcontrib-programoutput
+   git clone https://github.com/NextThought/sphinxcontrib-programoutput
 
 Please fork the repository and send pull requests with your fixes or features,
 but respect these guidelines:
@@ -89,6 +89,6 @@ but respect these guidelines:
 .. _Sphinx: http://sphinx.pocoo.org/latest
 .. _Cheeseshop: http://pypi.python.org/pypi/sphinxcontrib-programoutput
 .. _documentation: http://sphinxcontrib-programoutput.readthedocs.org
-.. _issue tracker: https://github.com/lunaryorn/sphinxcontrib-programoutput/issues
-.. _Github: https://github.com/lunaryorn/sphinxcontrib-programoutput
+.. _issue tracker: https://github.com/NextThought/sphinxcontrib-programoutput/issues/
+.. _Github: https://github.com/NextThought/sphinxcontrib-programoutput
 .. _pep8: http://pypi.python.org/pypi/pep8/
