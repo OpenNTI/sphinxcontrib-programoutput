@@ -48,6 +48,9 @@ def read_version_number():
         else:
             raise ValueError('Could not extract version number')
 
+tests_require = [
+    'pytest >= 2.2',
+]
 
 setup(
     name='nti.sphinxcontrib-programoutput',
@@ -74,7 +77,13 @@ setup(
     platforms='any',
     packages=find_packages('src'),
     package_dir={'': 'src'},
-    include_package_data=True,
-    install_requires=['Sphinx>=1.1'],
     namespace_packages=['sphinxcontrib'],
+    include_package_data=True,
+    install_requires=[
+        'Sphinx>=1.1',
+    ],
+    tests_require=tests_require,
+    extras_require={
+        'test': tests_require,
+    },
 )

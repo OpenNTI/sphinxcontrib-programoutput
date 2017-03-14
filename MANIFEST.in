@@ -2,5 +2,7 @@ include README.rst
 include LICENSE
 include CHANGES.*
 include tox.ini
+include .travis.yml
+recursive-include src *.py
 recursive-include doc *.rst *.py
-recursive-include tests *.py *.txt
+recursive-include tests *.py

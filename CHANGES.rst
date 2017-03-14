@@ -1,7 +1,7 @@
 Unreleased (2017)
 =================
 
-- Forked and revived the project in Gitub_
+- Forked and revived the project in `Gitub`_.
 
 
 0.8 (Oct 12, 2012)
