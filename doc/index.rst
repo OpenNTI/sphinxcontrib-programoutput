@@ -257,7 +257,7 @@ Development
 
 The source code is hosted on Github_::
 
-   git clone https://github.com/lunaryorn/sphinxcontrib-programoutput
+   git clone https://github.com/NextThought/sphinxcontrib-programoutput
 
 Please fork the repository and send pull requests with your fixes or features,
 but respect these guidelines:
@@ -297,8 +297,8 @@ License
 
 .. _Sphinx: http://sphinx.pocoo.org/
 .. _Cheeseshop: http://pypi.python.org/pypi/sphinxcontrib-programoutput
-.. _github: https://github.com/lunaryorn/sphinxcontrib-programoutput
-.. _readme: https://github.com/lunaryorn/sphinxcontrib-programoutput/blob/master/README.rst
+.. _github: https://github.com/NextThought/sphinxcontrib-programoutput
+.. _readme: https://github.com/NextThought/sphinxcontrib-programoutput/blob/master/README.rst
 .. _format string: http://docs.python.org/library/string.html#formatstrings
-.. _issue tracker: https://github.com/lunaryorn/sphinxcontrib-programoutput/issues
+.. _issue tracker: https://github.com/NextThought/sphinxcontrib-programoutput/issues
 .. _pep8: http://pypi.python.org/pypi/pep8/
