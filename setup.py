@@ -49,7 +49,6 @@ def read_version_number():
             raise ValueError('Could not extract version number')
 
 tests_require = [
-    'pytest >= 2.2',
 ]
 
 setup(
@@ -90,4 +89,5 @@ setup(
     extras_require={
         'test': tests_require,
     },
+    test_suite='sphinxcontrib.programoutput.tests',
 )

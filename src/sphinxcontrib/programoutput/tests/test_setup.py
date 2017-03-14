@@ -23,17 +23,24 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-from __future__ import (print_function, division, unicode_literals,
-                        absolute_import)
+from __future__ import print_function, division, absolute_import
 
+import unittest
+from . import AppMixin
 
 from sphinxcontrib.programoutput import ProgramOutputCache
 
+class TestSetup(AppMixin,
+                unittest.TestCase):
 
-def pytest_funcarg__content(request): # pylint: disable=W0613
-    return 'dummy content'
 
+    def test_init_cache(self):
+        app = self.app
+        assert isinstance(app.env.programoutput_cache, ProgramOutputCache)
+        assert not app.env.programoutput_cache
 
-def test_init_cache(app):
-    assert isinstance(app.env.programoutput_cache, ProgramOutputCache)
-    assert not app.env.programoutput_cache
+def test_suite():
+    return unittest.defaultTestLoader.loadTestsFromName(__name__)
+
+if __name__ == '__main__':
+    unittest.main(defaultTest='test_suite')
