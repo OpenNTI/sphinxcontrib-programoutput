@@ -3,6 +3,7 @@ import os.path
 import shutil
 import tempfile
 
+from docutils.parsers.rst import directives
 from sphinx.application import Sphinx
 
 from functools import update_wrapper
@@ -49,13 +50,16 @@ html_theme = 'default'
 
 class AppMixin(object):
 
-    document_content = 'dummy content'
+    document_content = '=============\ndummy content\n=============\n'
 
     def setUp(self):
-        pass
+        # Avoid "WARNING: while setting up extension
+        # sphinxcontrib.programoutput: directive u'program-output' is
+        # already registered, it will be overridden".
+        self.directives = directives._directives.copy()
 
     def tearDown(self):
-        pass
+        directives._directives = self.directives
 
     @Lazy
     def tmpdir(self):
@@ -84,7 +88,11 @@ class AppMixin(object):
         os.mkdir(content_directory)
         content_document = os.path.join(content_directory, 'doc.rst')
         with open(content_document, 'w') as f:
+            f.write("=====\n")
+            f.write("Title\n")
+            f.write("=====\n\n")
             f.write(self.document_content)
+
         return srcdir
 
     @Lazy
@@ -99,7 +107,6 @@ class AppMixin(object):
     def confoverrides(self):
         return {}
 
-    build_app = False
 
     @Lazy
     def app(self):
@@ -110,13 +117,8 @@ class AppMixin(object):
         outdir = self.outdir
         doctreedir = self.doctreedir
         confoverrides = self.confoverrides
-        # XXX: We are always ignoring warnings now, because newer versions
-        # of sphinx produce "WARNING: while setting up extension
-        # sphinxcontrib.programoutput: directive u'program-output' is
-        # already registered, it will be overridden". We really need to use
-        # a new app each time
-        #warningiserror = 'ignore_warnings' not in request.keywords
-        warningiserror = False
+        warningiserror = not self.ignore_warnings
+
         app = Sphinx(str(srcdir), str(srcdir), str(outdir), str(doctreedir), 'html',
                      status=None, warning=None, freshenv=None,
                      warningiserror=warningiserror, confoverrides=confoverrides)
@@ -126,6 +128,10 @@ class AppMixin(object):
 
     @Lazy
     def build_app(self):
+        return False
+
+    @Lazy
+    def ignore_warnings(self):
         return False
 
     @Lazy
@@ -140,6 +146,9 @@ def with_content(content, **kwargs):
         def w(self):
             self.document_content = content
             if kwargs:
+                if 'ignore_warnings' in kwargs:
+                    getattr(self, 'ignore_warnings')
+                    self.ignore_warnings = kwargs.pop("ignore_warnings")
                 getattr(self, 'confoverrides')
                 self.confoverrides = kwargs
             f(self)
