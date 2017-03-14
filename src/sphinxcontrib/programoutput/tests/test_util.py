@@ -25,29 +25,37 @@
 
 from __future__ import (print_function, division, absolute_import)
 
-import pytest
+import unittest
 
 from sphinxcontrib.programoutput import _slice
 
+class TestSlice(unittest.TestCase):
 
-def test_slice_simple():
-    assert _slice('2') == (2, None)
-    assert _slice('2,2') == (2, 2)
-
-
-def test_slice_empty():
-    with pytest.raises(ValueError) as exc:
-        assert _slice('')
-    assert str(exc.value).startswith("invalid literal for int() with base 10:")
+    def test_slice_simple(self):
+        assert _slice('2') == (2, None)
+        assert _slice('2,2') == (2, 2)
 
 
-def test_slice_no_int():
-    with pytest.raises(ValueError) as exc:
-        _slice('foo,2')
-    assert str(exc.value).startswith("invalid literal for int() with base 10:")
+    def test_slice_empty(self):
+        with self.assertRaises(ValueError) as exc:
+            assert _slice('')
+        assert str(exc.exception.args[0]).startswith("invalid literal for int() with base 10:")
 
 
-def test_slice_too_many():
-    with pytest.raises(ValueError) as exc:
-        _slice('2,2,2')
-    assert str(exc.value) == 'too many slice parts'
+    def test_slice_no_int(self):
+        with self.assertRaises(ValueError) as exc:
+            _slice('foo,2')
+        assert str(exc.exception.args[0]).startswith("invalid literal for int() with base 10:")
+
+
+    def test_slice_too_many(self):
+        with self.assertRaises(ValueError) as exc:
+            _slice('2,2,2')
+        self.assertEqual(str(exc.exception.args[0]), 'too many slice parts')
+
+
+def test_suite():
+    return unittest.defaultTestLoader.loadTestsFromName(__name__)
+
+if __name__ == '__main__':
+    unittest.main(defaultTest='test_suite')

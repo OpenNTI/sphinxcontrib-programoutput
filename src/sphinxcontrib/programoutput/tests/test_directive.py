@@ -23,306 +23,312 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-from __future__ import (print_function, division, unicode_literals,
-                        absolute_import)
+from __future__ import print_function, division, absolute_import
 
 import os
 import sys
-import platform
+import unittest
 
-import pytest
 from sphinx.errors import SphinxWarning
 from docutils.nodes import literal_block, system_message
 
 from sphinxcontrib.programoutput import Command
 
-
-def assert_output(doctree, output):
-    __tracebackhide__ = True
-    literal = doctree.next_node(literal_block)
-    assert literal
-    assert literal.astext() == output
+from . import AppMixin
+from . import with_content
 
 
-def assert_cache(app, cmd, output, use_shell=False,
-                 hide_standard_error=False, returncode=0,
-                 working_directory=None):
-    cache = app.env.programoutput_cache
-    working_directory = working_directory or app.srcdir
-    working_directory = os.path.normpath(os.path.realpath(
-        working_directory))
-    cache_key = Command(cmd, use_shell, hide_standard_error,
-                        working_directory)
-    assert cache == {cache_key: (returncode, output)}
+class TestDirective(AppMixin,
+                    unittest.TestCase):
+
+    def assert_output(self, doctree, output):
+        __tracebackhide__ = True
+        literal = doctree.next_node(literal_block)
+        self.assertTrue(literal)
+        self.assertEqual(literal.astext(), output)
+
+    def assert_cache(self, app, cmd, output, use_shell=False,
+                     hide_standard_error=False, returncode=0,
+                     working_directory=None):
+        cache = app.env.programoutput_cache
+        working_directory = working_directory or app.srcdir
+        working_directory = os.path.normpath(os.path.realpath(
+            working_directory))
+        cache_key = Command(cmd, use_shell, hide_standard_error,
+                            working_directory)
+        self.assertEqual(cache, {cache_key: (returncode, output)})
+
+    @with_content('.. program-output:: echo eggs')
+    def test_simple(self):
+
+        self.assert_output(self.doctree, 'eggs')
+        self.assert_cache(self.app, 'echo eggs', 'eggs')
 
 
-@pytest.mark.with_content('.. program-output:: echo eggs')
-def test_simple(doctree, app):
-    assert_output(doctree, 'eggs')
-    assert_cache(app, 'echo eggs', 'eggs')
+    @with_content("""\
+    .. program-output:: python -c 'print("spam with eggs")'""")
+    def test_with_spaces(self):
+        """
+        Test for command splitting with spaces involved.  Do *not* use ``echo`` for
+        this test, because ``echo`` handles multiple arguments just as well as
+        single arguments.
+        """
+
+        self.assert_output(self.doctree, 'spam with eggs')
+        self.assert_cache(self.app, 'python -c \'print("spam with eggs")\'',
+                     'spam with eggs')
 
 
-@pytest.mark.with_content("""\
-.. program-output:: python -c 'print("spam with eggs")'""")
-def test_with_spaces(doctree, app):
-    """
-    Test for command splitting with spaces involved.  Do *not* use ``echo`` for
-    this test, because ``echo`` handles multiple arguments just as well as
-    single arguments.
-    """
-    assert_output(doctree, 'spam with eggs')
-    assert_cache(app, 'python -c \'print("spam with eggs")\'',
-                 'spam with eggs')
+    @with_content("""\
+    .. program-output:: python -c 'import sys; sys.stderr.write("spam with eggs")'
+                              """)
+    def test_standard_error(self):
+        output = 'spam with eggs'
+        self.assert_output(self.doctree, output)
+        cmd = 'python -c \'import sys; sys.stderr.write("spam with eggs")\''
+        self.assert_cache(self.app, cmd, output)
 
 
-@pytest.mark.with_content("""\
-.. program-output:: python -c 'import sys; sys.stderr.write("spam with eggs")'
-                          """)
-def test_standard_error(doctree, app):
-    output = 'spam with eggs'
-    assert_output(doctree, output)
-    cmd = 'python -c \'import sys; sys.stderr.write("spam with eggs")\''
-    assert_cache(app, cmd, output)
+    @with_content("""\
+    .. program-output:: python -V
+       :nostderr:""")
+    @unittest.skipIf(sys.version_info[0] > 2,
+                     reason="Python 3 prints version to stdout, not stderr")
+    def test_standard_error_disabled(self):
+        self.assert_output(self.doctree, '')
+        self.assert_cache(self.app, 'python -V', '', hide_standard_error=True)
 
 
-@pytest.mark.with_content("""\
-.. program-output:: python -V
-   :nostderr:""")
-@pytest.mark.skipif(sys.version_info[0] > 2,
-                    reason="Python 3 prints version to stdout, not stderr")
-def test_standard_error_disabled(doctree, app):
-    assert_output(doctree, '')
-    assert_cache(app, 'python -V', '', hide_standard_error=True)
+    @with_content("""\
+    .. program-output:: python -c 'import os; print(os.getcwd())'""")
+    def test_working_directory_defaults_to_srcdir(self):
+        output = os.path.realpath(self.srcdir)
+        self.assert_output(self.doctree, output)
+        self.assert_cache(self.app, "python -c 'import os; print(os.getcwd())'", output,
+                     working_directory=str(self.srcdir))
 
 
-@pytest.mark.with_content("""\
-.. program-output:: python -c 'import os; print(os.getcwd())'""")
-def test_working_directory_defaults_to_srcdir(doctree, app, srcdir):
-    output = str(srcdir.realpath())
-    assert_output(doctree, output)
-    assert_cache(app, "python -c 'import os; print(os.getcwd())'", output,
-                 working_directory=str(srcdir))
+    @with_content("""\
+    .. program-output:: python -c 'import os; print(os.getcwd())'
+       :cwd: /""")
+    def test_working_directory_relative_to_srcdir(self):
+        output = os.path.realpath(self.srcdir)
+        self.assert_output(self.doctree, output)
+        self.assert_cache(self.app, "python -c 'import os; print(os.getcwd())'", output,
+                     working_directory=str(self.srcdir))
 
 
-@pytest.mark.with_content("""\
-.. program-output:: python -c 'import os; print(os.getcwd())'
-   :cwd: /""")
-def test_working_directory_relative_to_srcdir(doctree, app, srcdir):
-    output = str(srcdir.realpath())
-    assert_output(doctree, output)
-    assert_cache(app, "python -c 'import os; print(os.getcwd())'", output,
-                 working_directory=str(srcdir))
+    @with_content("""\
+    .. program-output:: python -c 'import os; print(os.getcwd())'
+       :cwd: .""")
+    def test_working_directory_relative_to_document(self):
+        contentdir = os.path.join(self.srcdir, 'content')
+        output = os.path.realpath(contentdir)
+        self.assert_output(self.doctree, output)
+        self.assert_cache(self.app, "python -c 'import os; print(os.getcwd())'", output,
+                     working_directory=str(contentdir))
 
 
-@pytest.mark.with_content("""\
-.. program-output:: python -c 'import os; print(os.getcwd())'
-   :cwd: .""")
-def test_working_directory_relative_to_document(doctree, app, srcdir):
-    contentdir = srcdir.join('content')
-    output = str(contentdir.realpath())
-    assert_output(doctree, output)
-    assert_cache(app, "python -c 'import os; print(os.getcwd())'", output,
-                 working_directory=str(contentdir))
-
-
-@pytest.mark.with_content("""\
+    @with_content("""\
 .. program-output:: echo "${PWD}"
-   :shell:
-   :cwd: .""")
-def test_working_directory_with_shell(doctree, app, srcdir):
-    contentdir = srcdir.join('content')
-    output = str(contentdir.realpath())
-    assert_output(doctree, output)
-    assert_cache(app, 'echo "${PWD}"', output, use_shell=True,
-                 working_directory=str(contentdir))
+       :shell:
+       :cwd: .""")
+    def test_working_directory_with_shell(self):
+        doctree = self.doctree
+        contentdir = os.path.join(self.srcdir, 'content')
+        output = os.path.realpath(contentdir)
+        self.assert_output(doctree, output)
+        self.assert_cache(self.app, 'echo "${PWD}"', output, use_shell=True,
+                     working_directory=str(contentdir))
 
 
-@pytest.mark.with_content('.. program-output:: echo "${HOME}"')
-def test_no_expansion_without_shell(doctree, app):
-    assert_output(doctree, '${HOME}')
-    assert_cache(app, 'echo "${HOME}"', '${HOME}')
+    @with_content('.. program-output:: echo "${HOME}"')
+    def test_no_expansion_without_shell(self):
+        self.assert_output(self.doctree, '${HOME}')
+        self.assert_cache(self.app, 'echo "${HOME}"', '${HOME}')
 
 
-@pytest.mark.with_content("""\
-.. program-output:: echo "${HOME}"
-   :shell:""")
-def test_expansion_with_shell(doctree, app):
-    assert_output(doctree, os.environ['HOME'])
-    assert_cache(app, 'echo "${HOME}"', os.environ['HOME'], use_shell=True)
+    @with_content("""\
+    .. program-output:: echo "${HOME}"
+       :shell:""")
+    def test_expansion_with_shell(self):
+        self.assert_output(self.doctree, os.environ['HOME'])
+        self.assert_cache(self.app, 'echo "${HOME}"', os.environ['HOME'], use_shell=True)
 
 
-@pytest.mark.with_content("""\
-.. program-output:: echo "spam with eggs"
-   :prompt:""")
-def test_prompt(doctree, app):
-    assert_output(doctree, """\
+    @with_content("""\
+    .. program-output:: echo "spam with eggs"
+       :prompt:""")
+    def test_prompt(self):
+        self.assert_output(self.doctree, """\
 $ echo "spam with eggs"
 spam with eggs""")
-    assert_cache(app, 'echo "spam with eggs"', 'spam with eggs')
+        self.assert_cache(self.app, 'echo "spam with eggs"', 'spam with eggs')
 
 
-@pytest.mark.with_content('.. command-output:: echo "spam with eggs"')
-def test_command(doctree, app):
-    assert_output(doctree, """\
+    @with_content('.. command-output:: echo "spam with eggs"')
+    def test_command(self):
+        self.assert_output(self.doctree, """\
 $ echo "spam with eggs"
 spam with eggs""")
-    assert_cache(app, 'echo "spam with eggs"', 'spam with eggs')
+        self.assert_cache(self.app, 'echo "spam with eggs"', 'spam with eggs')
 
 
-@pytest.mark.with_content('.. command-output:: echo spam')
-@pytest.mark.confoverrides(
-    programoutput_prompt_template='>> {command}\n<< {output}')
-def test_command_non_default_prompt(doctree, app):
-    assert_output(doctree, '>> echo spam\n<< spam')
-    assert_cache(app, 'echo spam', 'spam')
+    @with_content('.. command-output:: echo spam',
+        programoutput_prompt_template='>> {command}\n<< {output}')
+    def test_command_non_default_prompt(self):
+        self.assert_output(self.doctree, '>> echo spam\n<< spam')
+        self.assert_cache(self.app, 'echo spam', 'spam')
 
 
-@pytest.mark.with_content("""\
-.. program-output:: echo spam
-   :extraargs: with eggs""")
-def test_extraargs(doctree, app):
-    assert_output(doctree, 'spam with eggs')
-    assert_cache(app, 'echo spam with eggs', 'spam with eggs')
+    @with_content("""\
+    .. program-output:: echo spam
+       :extraargs: with eggs""")
+    def test_extraargs(self):
+        self.assert_output(self.doctree, 'spam with eggs')
+        self.assert_cache(self.app, 'echo spam with eggs', 'spam with eggs')
 
 
-@pytest.mark.with_content('''\
-.. program-output:: echo
-   :shell:
-   :extraargs: "${HOME}"''')
-def test_extraargs_with_shell(doctree, app):
-    assert_output(doctree, os.environ['HOME'])
-    assert_cache(app, 'echo "${HOME}"', os.environ['HOME'], use_shell=True)
+    @with_content('''\
+    .. program-output:: echo
+       :shell:
+       :extraargs: "${HOME}"''')
+    def test_extraargs_with_shell(self):
+        self.assert_output(self.doctree, os.environ['HOME'])
+        self.assert_cache(self.app, 'echo "${HOME}"', os.environ['HOME'], use_shell=True)
 
 
-@pytest.mark.with_content("""\
-.. program-output:: echo spam
-   :prompt:
-   :extraargs: with eggs""")
-def test_extraargs_with_prompt(doctree, app):
-    assert_output(doctree, '$ echo spam\nspam with eggs')
-    assert_cache(app, 'echo spam with eggs', 'spam with eggs')
+    @with_content("""\
+    .. program-output:: echo spam
+       :prompt:
+       :extraargs: with eggs""")
+    def test_extraargs_with_prompt(self):
+        self.assert_output(self.doctree, '$ echo spam\nspam with eggs')
+        self.assert_cache(self.app, 'echo spam with eggs', 'spam with eggs')
 
 
-@pytest.mark.with_content("""\
-.. program-output:: python -c 'print("spam\\nwith\\neggs")'
-   :ellipsis: 2""")
-def test_ellipsis_stop_only(doctree, app):
-    assert_output(doctree, 'spam\nwith\n...')
-    assert_cache(app, 'python -c \'print("spam\\nwith\\neggs")\'',
-                 'spam\nwith\neggs')
+    @with_content("""\
+    .. program-output:: python -c 'print("spam\\nwith\\neggs")'
+       :ellipsis: 2""")
+    def test_ellipsis_stop_only(self):
+        self.assert_output(self.doctree, 'spam\nwith\n...')
+        self.assert_cache(self.app, 'python -c \'print("spam\\nwith\\neggs")\'',
+                     'spam\nwith\neggs')
 
 
-@pytest.mark.with_content("""\
-.. program-output:: python -c 'print("spam\\nwith\\neggs")'
-   :ellipsis: -2""")
-def test_ellipsis_negative_stop(doctree, app):
-    assert_output(doctree, 'spam\n...')
-    assert_cache(app, """python -c 'print("spam\\nwith\\neggs")'""",
-                 'spam\nwith\neggs')
+    @with_content("""\
+    .. program-output:: python -c 'print("spam\\nwith\\neggs")'
+       :ellipsis: -2""")
+    def test_ellipsis_negative_stop(self):
+        self.assert_output(self.doctree, 'spam\n...')
+        self.assert_cache(self.app, """python -c 'print("spam\\nwith\\neggs")'""",
+                     'spam\nwith\neggs')
 
 
-@pytest.mark.with_content("""\
-.. program-output:: python -c 'print("spam\\nwith\\neggs")'
-   :ellipsis: 1, 2""")
-def test_ellipsis_start_and_stop(doctree, app):
-    assert_output(doctree, 'spam\n...\neggs')
-    assert_cache(app, """python -c 'print("spam\\nwith\\neggs")'""",
-                 'spam\nwith\neggs')
+    @with_content("""\
+    .. program-output:: python -c 'print("spam\\nwith\\neggs")'
+       :ellipsis: 1, 2""")
+    def test_ellipsis_start_and_stop(self):
+        self.assert_output(self.doctree, 'spam\n...\neggs')
+        self.assert_cache(self.app, """python -c 'print("spam\\nwith\\neggs")'""",
+                     'spam\nwith\neggs')
 
 
-@pytest.mark.with_content("""\
-.. program-output:: python -c 'print("spam\\nwith\\neggs")'
-   :ellipsis: 1, -1""")
-def test_ellipsis_start_and_negative_stop(doctree, app):
-    assert_output(doctree, 'spam\n...\neggs')
-    assert_cache(app, """python -c 'print("spam\\nwith\\neggs")'""",
-                 'spam\nwith\neggs')
+    @with_content("""\
+    .. program-output:: python -c 'print("spam\\nwith\\neggs")'
+       :ellipsis: 1, -1""")
+    def test_ellipsis_start_and_negative_stop(self):
+        self.assert_output(self.doctree, 'spam\n...\neggs')
+        self.assert_cache(self.app, """python -c 'print("spam\\nwith\\neggs")'""",
+                     'spam\nwith\neggs')
 
 
-@pytest.mark.with_content("""\
-.. program-output:: python -c 'import sys; sys.exit(1)'""")
-@pytest.mark.xfail
-def test_unexpected_return_code(app):
-    with pytest.raises(SphinxWarning) as excinfo:
-        app.build()
-    exc_message = 'WARNING: Unexpected return code 1 from command {0!r}\n'.format(
-        "python -c 'import sys; sys.exit(1)'")
-    assert str(excinfo.value) == exc_message
+    @with_content("""\
+    .. program-output:: python -c 'import sys; sys.exit(1)'""")
+    @unittest.skip("Fails")
+    def test_unexpected_return_code(self):
+        with self.assertRaises(SphinxWarning) as excinfo:
+            self.app.build()
+        exc_message = 'WARNING: Unexpected return code 1 from command {0!r}\n'.format(
+            "python -c 'import sys; sys.exit(1)'")
+        assert str(excinfo.value) == exc_message
 
 
-@pytest.mark.with_content("""\
-.. program-output:: python -c 'import sys; sys.exit(1)'
-   :shell:""")
-@pytest.mark.xfail
-def test_shell_with_unexpected_return_code(app):
-    with pytest.raises(SphinxWarning) as excinfo:
-        app.build()
-    exc_message = 'WARNING: Unexpected return code 1 from command {0!r}\n'.format(
-        "python -c 'import sys; sys.exit(1)'")
-    assert str(excinfo.value) == exc_message
+    @with_content("""\
+    .. program-output:: python -c 'import sys; sys.exit(1)'
+       :shell:""")
+    @unittest.skip("Fails")
+    def test_shell_with_unexpected_return_code(self):
+        with self.assertRaises(SphinxWarning) as excinfo:
+            self.app.build()
+        exc_message = 'WARNING: Unexpected return code 1 from command {0!r}\n'.format(
+            "python -c 'import sys; sys.exit(1)'")
+        assert str(excinfo.value) == exc_message
 
 
-@pytest.mark.with_content("""\
-.. program-output:: python -c 'import sys; print("foo"); sys.exit(1)'
-   :returncode: 1""")
-def test_expected_non_zero_return_code(doctree, app):
-    assert_output(doctree, 'foo')
-    assert_cache(app, 'python -c \'import sys; print("foo"); sys.exit(1)\'',
-                 'foo', returncode=1)
+    @with_content("""\
+    .. program-output:: python -c 'import sys; print("foo"); sys.exit(1)'
+       :returncode: 1""")
+    def test_expected_non_zero_return_code(self):
+        self.assert_output(self.doctree, 'foo')
+        self.assert_cache(self.app, 'python -c \'import sys; print("foo"); sys.exit(1)\'',
+                          'foo', returncode=1)
 
 
-@pytest.mark.with_content("""\
+    @with_content("""\
 .. command-output:: python -c 'import sys; sys.exit(1)'
-   :returncode: 1""")
-@pytest.mark.confoverrides(
-    programoutput_prompt_template='> {command}\n{output}\n[{returncode}]>')
-def test_prompt_with_return_code(doctree, app):
-    assert_output(doctree, """\
+   :returncode: 1""",
+        programoutput_prompt_template='> {command}\n{output}\n[{returncode}]>')
+    def test_prompt_with_return_code(self):
+        doctree = self.doctree
+        app = self.app
+        self.assert_output(doctree, """\
 > python -c 'import sys; sys.exit(1)'
 
 [1]>""")
-    assert_cache(app, "python -c 'import sys; sys.exit(1)'", '',
-                 returncode=1)
+        self.assert_cache(app, "python -c 'import sys; sys.exit(1)'", '',
+                          returncode=1)
 
 
-@pytest.mark.with_content(".. program-output:: 'spam with eggs'")
-@pytest.mark.ignore_warnings
-def test_non_existing_executable(doctree, srcdir):
-    # check that a proper error message appears in the document
-    message = doctree.next_node(system_message)
-    assert message
-    srcfile = str(srcdir.join('content').join('doc.rst'))
-    assert message['source'] == srcfile
-    assert message['line'] == 4
-    if sys.version_info[0:2] < (3, 2):
+    @with_content(u".. program-output:: 'spam with eggs'")
+    def test_non_existing_executable(self):
+        # check that a proper error message appears in the document
+        message = self.doctree.next_node(system_message)
+        assert message
+        srcfile = os.path.join(self.srcdir, 'content', 'doc.rst')
+        self.assertEqual(message['source'], srcfile)
+        self.assertEqual(message['line'], 1)
+
+        message_text = message.astext()
+        self.assertIn(srcfile, message_text)
+        self.assertIn('spam with eggs', message_text)
+        self.assertIn("No such file or directory", message_text)
+
+
+    @with_content("""\
+    .. program-output:: echo spam
+       :cwd: ./subdir""")
+    def test_non_existing_working_directory(self):
+        # check that a proper error message appears in the document
+        doctree = self.doctree
+        srcdir = self.srcdir
+        message = doctree.next_node(system_message)
+        assert message
+        srcfile = os.path.join(srcdir, 'content', 'doc.rst')
+        self.assertEqual(message['source'], srcfile)
+        self.assertEqual(message['line'], 1)
+
         msgtemplate = ("{0}:4: (ERROR/3) Command {1!r} failed: "
-                       "[Errno 2] No such file or directory")
-    else:
-        msgtemplate = ("{0}:4: (ERROR/3) Command {1!r} failed: "
-                       "[Errno 2] No such file or directory: {1}")
-    assert message.astext() == msgtemplate.format(srcfile, "'spam with eggs'")
+                       "[Errno 2] No such file or directory: {2!r}")
+        filename = os.path.join(os.path.realpath(os.path.join(srcdir, 'content')),
+                                'subdir')
+        message_text = message.astext()
+        self.assertIn(srcfile, message_text)
+        self.assertIn('subdir', message_text)
+        self.assertIn("No such file or directory", message_text)
 
+def test_suite():
+    return unittest.defaultTestLoader.loadTestsFromName(__name__)
 
-@pytest.mark.with_content("""\
-.. program-output:: echo spam
-   :cwd: ./subdir""")
-@pytest.mark.ignore_warnings
-def test_non_existing_working_directory(doctree, srcdir):
-    # check that a proper error message appears in the document
-    message = doctree.next_node(system_message)
-    assert message
-    srcfile = str(srcdir.join('content').join('doc.rst'))
-    assert message['source'] == srcfile
-    assert message['line'] == 4
-    msgtemplate = ("{0}:4: (ERROR/3) Command {1!r} failed: "
-                   "[Errno 2] No such file or directory: {2!r}")
-    filename = srcdir.join('content').realpath().join('subdir')
-    if sys.version_info[0:2] == (3, 2):
-        # XXX: Python 3.2 breaks the error message here
-        filename = 'echo'
-    elif platform.python_implementation() == 'PyPy':
-        filename = unicode(filename)
-    else:
-        filename = str(filename)
-    msg = msgtemplate.format(srcfile, 'echo spam', filename)
-    assert message.astext() == msg
+if __name__ == '__main__':
+    unittest.main(defaultTest='test_suite')
