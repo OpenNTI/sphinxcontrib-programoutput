@@ -23,8 +23,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-from __future__ import (print_function, division, unicode_literals,
-                        absolute_import)
+from __future__ import (print_function, division, absolute_import)
 
 import pytest
 
@@ -39,13 +38,13 @@ def test_slice_simple():
 def test_slice_empty():
     with pytest.raises(ValueError) as exc:
         assert _slice('')
-    assert str(exc.value) == "invalid literal for int() with base 10: ''"
+    assert str(exc.value).startswith("invalid literal for int() with base 10:")
 
 
 def test_slice_no_int():
     with pytest.raises(ValueError) as exc:
         _slice('foo,2')
-    assert str(exc.value) == "invalid literal for int() with base 10: 'foo'"
+    assert str(exc.value).startswith("invalid literal for int() with base 10:")
 
 
 def test_slice_too_many():
