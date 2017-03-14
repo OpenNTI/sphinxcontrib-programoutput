@@ -245,25 +245,26 @@ spam with eggs""")
 
     @with_content("""\
     .. program-output:: python -c 'import sys; sys.exit(1)'""")
-    @unittest.skip("Fails")
     def test_unexpected_return_code(self):
         with self.assertRaises(SphinxWarning) as excinfo:
             self.app.build()
-        exc_message = 'WARNING: Unexpected return code 1 from command {0!r}\n'.format(
-            "python -c 'import sys; sys.exit(1)'")
-        assert str(excinfo.value) == exc_message
+        self.assertIn('WARNING: Unexpected return code 1 from command',
+                      excinfo.exception.args[0])
+        self.assertIn("python -c 'import sys; sys.exit(1)'",
+                      excinfo.exception.args[0])
 
 
     @with_content("""\
     .. program-output:: python -c 'import sys; sys.exit(1)'
        :shell:""")
-    @unittest.skip("Fails")
     def test_shell_with_unexpected_return_code(self):
         with self.assertRaises(SphinxWarning) as excinfo:
             self.app.build()
-        exc_message = 'WARNING: Unexpected return code 1 from command {0!r}\n'.format(
-            "python -c 'import sys; sys.exit(1)'")
-        assert str(excinfo.value) == exc_message
+        self.assertIn('WARNING: Unexpected return code 1 from command',
+                      excinfo.exception.args[0])
+        self.assertIn("python -c 'import sys; sys.exit(1)'",
+                      excinfo.exception.args[0])
+
 
 
     @with_content("""\
@@ -290,24 +291,24 @@ spam with eggs""")
                           returncode=1)
 
 
-    @with_content(u".. program-output:: 'spam with eggs'")
+    @with_content(u".. program-output:: 'spam with eggs'", ignore_warnings=True)
     def test_non_existing_executable(self):
         # check that a proper error message appears in the document
         message = self.doctree.next_node(system_message)
         assert message
         srcfile = os.path.join(self.srcdir, 'content', 'doc.rst')
         self.assertEqual(message['source'], srcfile)
-        self.assertEqual(message['line'], 1)
+        self.assertEqual(message['line'], 5)
 
         message_text = message.astext()
         self.assertIn(srcfile, message_text)
         self.assertIn('spam with eggs', message_text)
-        self.assertIn("No such file or directory", message_text)
+        self.assertIn("Errno", message_text)
 
 
     @with_content("""\
     .. program-output:: echo spam
-       :cwd: ./subdir""")
+       :cwd: ./subdir""", ignore_warnings=True)
     def test_non_existing_working_directory(self):
         # check that a proper error message appears in the document
         doctree = self.doctree
@@ -316,12 +317,8 @@ spam with eggs""")
         assert message
         srcfile = os.path.join(srcdir, 'content', 'doc.rst')
         self.assertEqual(message['source'], srcfile)
-        self.assertEqual(message['line'], 1)
+        self.assertEqual(message['line'], 5)
 
-        msgtemplate = ("{0}:4: (ERROR/3) Command {1!r} failed: "
-                       "[Errno 2] No such file or directory: {2!r}")
-        filename = os.path.join(os.path.realpath(os.path.join(srcdir, 'content')),
-                                'subdir')
         message_text = message.astext()
         self.assertIn(srcfile, message_text)
         self.assertIn('subdir', message_text)

@@ -23,8 +23,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-from __future__ import (print_function, division, unicode_literals,
-                        absolute_import)
+from __future__ import print_function, division, absolute_import
 
 import os
 import pickle
@@ -35,23 +34,23 @@ from sphinxcontrib.programoutput import ProgramOutputCache, Command
 from . import AppMixin
 
 
-def assert_cache(cache, cmd, output, returncode=0):
-    result = (returncode, output)
-    assert not cache
-    assert cache[cmd] == result
-    assert cache == {cmd: result}
-
 class TestCache(AppMixin,
                 unittest.TestCase):
 
+    def assert_cache(self, cache, cmd, output, returncode=0):
+        result = (returncode, output)
+        self.assertFalse(cache)
+        self.assertEqual(cache[cmd], result)
+        self.assertEqual(cache, {cmd: result})
+
     def test_simple(self):
         cache = ProgramOutputCache()
-        assert_cache(cache, Command(['echo', 'blök']), 'blök')
+        self.assert_cache(cache, Command([u'echo', u'blök']), u'blök')
 
 
     def test_shell(self):
         cache = ProgramOutputCache()
-        assert_cache(cache, Command('echo blök', shell=True), 'blök')
+        self.assert_cache(cache, Command(u'echo blök', shell=True), u'blök')
 
 
     def test_working_directory(self):
@@ -60,7 +59,7 @@ class TestCache(AppMixin,
         os.mkdir(cwd)
         cwd = os.path.realpath(os.path.normpath(str(cwd)))
         cmd = ['python', '-c', 'import sys, os; sys.stdout.write(os.getcwd())']
-        assert_cache(cache, Command(cmd, working_directory=cwd), cwd)
+        self.assert_cache(cache, Command(cmd, working_directory=cwd), cwd)
 
 
     def test_working_directory_shell(self):
@@ -69,25 +68,25 @@ class TestCache(AppMixin,
         os.mkdir(cwd)
         cwd = os.path.realpath(os.path.normpath(str(cwd)))
         cmd = Command('echo $PWD', working_directory=cwd, shell=True)
-        assert_cache(cache, cmd, cwd)
+        self.assert_cache(cache, cmd, cwd)
 
 
     def test_hidden_standard_error(self):
         cache = ProgramOutputCache()
         cmd = ['python', '-c', 'import sys; sys.stderr.write("spam")']
-        assert_cache(cache, Command(cmd, hide_standard_error=True), '')
+        self.assert_cache(cache, Command(cmd, hide_standard_error=True), '')
 
 
     def test_nonzero_return_code(self):
         cache = ProgramOutputCache()
         cmd = ['python', '-c', 'import sys; sys.exit(1)']
-        assert_cache(cache, Command(cmd), '', returncode=1)
+        self.assert_cache(cache, Command(cmd), '', returncode=1)
 
 
     def test_nonzero_return_code_shell(self):
         cache = ProgramOutputCache()
         cmd = "python -c 'import sys; sys.exit(1)'"
-        assert_cache(cache, Command(cmd, shell=True), '', returncode=1)
+        self.assert_cache(cache, Command(cmd, shell=True), '', returncode=1)
 
     def test_cache_pickled(self):
         doctreedir = self.doctreedir
