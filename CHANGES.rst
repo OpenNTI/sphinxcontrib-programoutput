@@ -1,7 +1,10 @@
-Unreleased (2017)
-=================
+0.9 (Unreleased)
+================
 
-- Forked and revived the project in `Gitub <https://github.com/NextThought/sphinxcontrib-programoutput>`_.
+- Forked and revived the project in `Gitub
+  <https://github.com/NextThought/sphinxcontrib-programoutput>`_.
+
+- Run the tests on Travis CI.
 
 
 0.8 (Oct 12, 2012)

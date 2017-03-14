@@ -18,7 +18,8 @@ Install this extension from the Cheeseshop_::
 
    pip install sphinxcontrib-programoutput
 
-The extension requires Sphinx 1.1 and Python 2.6 or Python 3.1 at least.
+The extension requires Sphinx 1.1 and Python 2.7 or Python 3 (Python
+3.6 is tested) at least.
 
 
 Usage
