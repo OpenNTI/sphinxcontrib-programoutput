@@ -88,8 +88,8 @@ def test_standard_error(doctree, app):
 @pytest.mark.with_content("""\
 .. program-output:: python -V
    :nostderr:""")
-@pytest.mark.skipIf(sys.version_info[0] > 2,
-                    "Python 3 prints version to stdout, not stderr")
+@pytest.mark.skipif(sys.version_info[0] > 2,
+                    reason="Python 3 prints version to stdout, not stderr")
 def test_standard_error_disabled(doctree, app):
     assert_output(doctree, '')
     assert_cache(app, 'python -V', '', hide_standard_error=True)
