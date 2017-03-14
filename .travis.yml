@@ -7,10 +7,9 @@ python:
   - 2.7
   - 3.6
 script:
-  - py.test
-#  - coverage run setup.py test
-#after_success:
-#  - coveralls
+  - coverage run `which py.test`
+after_success:
+  - coveralls
 notifications:
   email: false
 
