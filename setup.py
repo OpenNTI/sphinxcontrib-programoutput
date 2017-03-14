@@ -40,7 +40,7 @@ VERSION_PATTERN = re.compile(r"__version__ = '([^']+)'")
 
 
 def read_version_number():
-    with open(os.path.join('src', 'sphinxcontrib', 'programoutput.py')) as stream:
+    with open(os.path.join('src', 'sphinxcontrib', 'programoutput', '__init__.py')) as stream:
         for line in stream:
             match = VERSION_PATTERN.search(line)
             if match:
