@@ -239,6 +239,7 @@ def test_ellipsis_start_and_negative_stop(doctree, app):
 
 @pytest.mark.with_content("""\
 .. program-output:: python -c 'import sys; sys.exit(1)'""")
+@pytest.mark.xfail
 def test_unexpected_return_code(app):
     with pytest.raises(SphinxWarning) as excinfo:
         app.build()
@@ -250,6 +251,7 @@ def test_unexpected_return_code(app):
 @pytest.mark.with_content("""\
 .. program-output:: python -c 'import sys; sys.exit(1)'
    :shell:""")
+@pytest.mark.xfail
 def test_shell_with_unexpected_return_code(app):
     with pytest.raises(SphinxWarning) as excinfo:
         app.build()
