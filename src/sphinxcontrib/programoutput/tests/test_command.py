@@ -80,24 +80,25 @@ class TestCommand(unittest.TestCase):
         assert command.command == 'echo spam with eggs'
 
 
-    def test_execute(self):
-        process = Command('echo spam').execute()
-        assert process.stderr is None
-        assert not process.stdout.closed
-        assert process.wait() == 0
+    def test_execute(self, **kwargs):
+        process = Command('echo spam', **kwargs).execute()
+        self.assertIsNone(process.stderr)
+        self.assertFalse(process.stdout.closed)
+        self.assertEqual(process.wait(), 0)
+        process.stdout.close()
 
 
     def test_execute_with_shell(self):
-        process = Command('echo spam', shell=True).execute()
-        assert process.stderr is None
-        assert not process.stdout.closed
-        assert process.wait() == 0
+        self.test_execute(shell=True)
 
 
     def test_execute_with_hidden_standard_error(self):
         process = Command('echo spam', hide_standard_error=True).execute()
-        assert not process.stderr.closed
-        assert process.wait() == 0
+        self.assertFalse(process.stdout.closed)
+        self.assertFalse(process.stderr.closed)
+        self.assertEqual(process.wait(), 0)
+        process.stdout.close()
+        process.stderr.close()
 
 
     def test_get_output(self):
