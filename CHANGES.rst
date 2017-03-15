@@ -4,10 +4,12 @@
 - Forked and revived the project in `Gitub
   <https://github.com/NextThought/sphinxcontrib-programoutput>`_.
 
-- Run the tests on Travis CI.
+- Run the tests on Travis CI. Formatting and style is enforced by pylint.
 
 - The oldest supported and tested Sphinx version is now 1.3.5. See
   :issue:`17`.
+
+- Remove support for Python 2.6, Python 3.2 and 3.3.
 
 - 100% test coverage.
 
