@@ -83,7 +83,7 @@ setup(
     namespace_packages=['sphinxcontrib'],
     include_package_data=True,
     install_requires=[
-        'Sphinx>=1.1',
+        'Sphinx>=1.3.5',
     ],
     tests_require=tests_require,
     extras_require={

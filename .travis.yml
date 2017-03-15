@@ -6,6 +6,17 @@ python:
   - pypy-5.4.1
   - 2.7
   - 3.6
+env:
+  matrix:
+    - ENV=latest
+    - ENV=oldest
+matrix:
+# Only run the oldest environment once
+  exclude:
+    - python: 3.6
+      env: ENV=oldest
+    - python: pypy-5.4.1
+      env: ENV=oldest
 script:
   - coverage run setup.py test
 after_success:
@@ -19,7 +30,8 @@ before_install:
 install:
   - pip install -U pip setuptools
   - pip install -U coverage coveralls
-  - pip install -U -e .[test]
+  - if [[ $ENV == latest ]]; then pip install -U -e .[test]; fi
+  - if [[ $ENV == oldest ]]; then pip install Sphinx==1.3.5 && pip install -e .[test]; fi
 
 cache: pip
 
