@@ -1,8 +1,9 @@
 .. default-domain:: rst
 .. highlight:: rest
 
-:py:mod:`sphinxcontrib.programoutput` – Insert command output
-=============================================================
+===============================================================
+ :py:mod:`sphinxcontrib.programoutput` – Insert command output
+===============================================================
 
 .. py:module:: sphinxcontrib.programoutput
    :synopsis:  Include the output of programs into documents
@@ -13,17 +14,17 @@ The extension is available under the terms of the :ref:`BSD license <license>`.
 
 
 Installation
-------------
+============
 
-Use ``pip`` to install this extension from the Cheeseshop_::
+Use ``pip`` to install this extension from PyPI_::
 
    pip install sphinxcontrib-programoutput
 
-The extension requires Sphinx 1.1 and Python 2.6 or Python 3.1 at least.
+The extension requires Sphinx 1.3 and Python 2.7 or Python 3 at least.
 
 
 Usage
------
+=====
 
 To include the output of a command into your document, use the
 :dir:`program-output` directive provided by this extension::
@@ -46,7 +47,7 @@ path which means that it is relative to the top level source directory.
 
 
 Shortening the output
-^^^^^^^^^^^^^^^^^^^^^
+---------------------
 
 Lengthy output can be shortened with the ``ellipsis`` option.  Its value
 denotes lines to omit when inserting the output of the command.  Instead, a
@@ -79,7 +80,7 @@ The above omits all lines except the first two and the last two lines:
 
 
 Mimicing shell input
-^^^^^^^^^^^^^^^^^^^^
+--------------------
 
 You can mimic shell input with the :dir:`command-output` directive [#alias]_.
 This directive inserts the command along with its output into the document::
@@ -101,7 +102,7 @@ The appearance of this output can be configured with
 
 
 Command execution and shell expansion
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-------------------------------------
 
 Normally the command is splitted according to the POSIX shell syntax (see
 :py:mod:`shlex`), and executed directly.  Thus special shell features like
@@ -133,7 +134,7 @@ syntax and swallowing of fatal errors!
 
 
 Error handling
-^^^^^^^^^^^^^^
+--------------
 
 If an unexpected exit code (also known as *return code*) is returned by a
 command, it is considered to have failed.  In this case, a build warning is
@@ -164,7 +165,7 @@ should the command return 0!
 
 
 Reference
----------
+=========
 
 .. directive:: .. program-output:: command
 
@@ -212,7 +213,7 @@ Reference
 
 
 Configuration
-^^^^^^^^^^^^^
+-------------
 
 This extension understands the following configuration options:
 
@@ -232,16 +233,8 @@ This extension understands the following configuration options:
      been applied.
    * ``returncode`` is the return code of the command as integer.
 
-.. confval:: programoutput_use_ansi
-
-   If ``True``, ANSI colour sequences in program output are interpreted.  To
-   use this feature, the extension :py:mod:`sphinxcontrib.ansi` must be enabled
-   and configured.  If missing or ``False``, these sequences are not
-   interpreted, but appear in documentation unchanged.
-
-
 Support
--------
+=======
 
 Please report issues to the `issue tracker`_ if you have trouble or found a bug
 in this extension, but respect the following guidelines:
@@ -253,7 +246,7 @@ in this extension, but respect the following guidelines:
 
 
 Development
------------
+===========
 
 The source code is hosted on Github_::
 
@@ -263,7 +256,7 @@ Please fork the repository and send pull requests with your fixes or features,
 but respect these guidelines:
 
 - Read `how to properly contribute to open source projects on GitHub
-  <http://gun.io/blog/how-to-github-fork-branch-and-pull-request/>`_.
+  <https://gun.io/blog/how-to-github-fork-branch-and-pull-request/>`_.
 - Use a topic branch to easily amend a pull request later, if necessary.
 - Write `good commit messages
   <http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html>`_.
@@ -276,7 +269,7 @@ but respect these guidelines:
 
 
 Changelog
----------
+=========
 
 .. include:: ../CHANGES.rst
 
@@ -284,7 +277,7 @@ Changelog
 .. _license:
 
 License
--------
+=======
 
 .. literalinclude:: ../LICENSE
 
@@ -295,10 +288,10 @@ License
             directive with the ``prompt`` option set.
 
 
-.. _Sphinx: http://sphinx.pocoo.org/
-.. _Cheeseshop: http://pypi.python.org/pypi/sphinxcontrib-programoutput
+.. _Sphinx: http://www.sphinx-doc.org/en/stable/
+.. _PyPI: https://pypi.python.org/pypi/nti.sphinxcontrib-programoutput
 .. _github: https://github.com/NextThought/sphinxcontrib-programoutput
 .. _readme: https://github.com/NextThought/sphinxcontrib-programoutput/blob/master/README.rst
-.. _format string: http://docs.python.org/library/string.html#formatstrings
+.. _format string: https://docs.python.org/2/library/string.html#formatstrings
 .. _issue tracker: https://github.com/NextThought/sphinxcontrib-programoutput/issues
-.. _pep8: http://pypi.python.org/pypi/pep8/
+.. _pep8: https://pypi.python.org/pypi/pep8/
