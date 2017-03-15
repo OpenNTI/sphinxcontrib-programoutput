@@ -23,30 +23,23 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import sys
 import os
 import re
-if sys.version_info[0] < 3:
-    from codecs import open
-
 from setuptools import setup, find_packages
 
-
-with open('README.rst', encoding='utf-8') as stream:
-    long_desc = stream.read()
-
-
-VERSION_PATTERN = re.compile(r"__version__ = '([^']+)'")
-
+def read_desc():
+    with open('README.rst') as stream:
+        return stream.read()
 
 def read_version_number():
+    VERSION_PATTERN = re.compile(r"__version__ = '([^']+)'")
     with open(os.path.join('src', 'sphinxcontrib', 'programoutput', '__init__.py')) as stream:
         for line in stream:
             match = VERSION_PATTERN.search(line)
             if match:
                 return match.group(1)
-        else:
-            raise ValueError('Could not extract version number')
+
+        raise ValueError('Could not extract version number')
 
 tests_require = [
 ]
@@ -60,7 +53,7 @@ setup(
     author='Sebastian Wiesner',
     author_email='lunaryorn@gmail.com',
     description='Sphinx extension to include program output',
-    long_description=long_desc,
+    long_description=read_desc(),
     zip_safe=False,
     classifiers=[
         'Development Status :: 5 - Production/Stable',
