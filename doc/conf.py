@@ -28,7 +28,13 @@ import sphinxcontrib.programoutput as programoutput
 
 needs_sphinx = '1.0'
 
-extensions = ['sphinx.ext.intersphinx', 'sphinxcontrib.programoutput']
+extensions = [
+    'sphinx.ext.autodoc',
+    'sphinx.ext.viewcode',
+    'sphinx.ext.extlinks',
+    'sphinx.ext.intersphinx',
+    'sphinxcontrib.programoutput'
+]
 
 source_suffix = '.rst'
 master_doc = 'index'
@@ -44,9 +50,16 @@ html_theme = 'default'
 html_static_path = []
 
 intersphinx_mapping = {
-    'python': ('http://docs.python.org', None),
-    'ansi': ('http://packages.python.org/sphinxcontrib-ansi', None)}
+    'python': ('https://docs.python.org', None),
+    'ansi': ('http://packages.python.org/sphinxcontrib-ansi', None)
+}
 
+extlinks = {
+    'issue': ('https://github.com/NextThought/sphinxcontrib-programoutput/issues/%s',
+              'issue #'),
+    'pr': ('https://github.com/NextThought/sphinxcontrib-programoutput/pull/%s',
+           'pull request #')
+}
 
 def setup(app):
     app.add_description_unit('confval', 'confval',
