@@ -1,4 +1,4 @@
-0.9 (Unreleased)
+0.9 (2017-03-15)
 ================
 
 - Forked and revived the project in `Gitub

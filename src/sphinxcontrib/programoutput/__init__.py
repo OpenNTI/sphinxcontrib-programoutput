@@ -46,7 +46,7 @@ from docutils.parsers import rst
 from docutils.parsers.rst.directives import flag, unchanged, nonnegative_int
 
 
-__version__ = '0.9.dev0'
+__version__ = '0.9'
 
 
 class program_output(nodes.Element):
