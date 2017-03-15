@@ -22,6 +22,12 @@ Use ``pip`` to install this extension from PyPI_::
 
 The extension requires Sphinx 1.3 and Python 2.7 or Python 3 at least.
 
+You can now add this extension to ``extensions``::
+
+   extensions = ['sphinxcontrib.programoutput']
+
+Now you've two new directives ``program-output`` and ``command-output`` to
+insert the output of programs.
 
 Usage
 =====

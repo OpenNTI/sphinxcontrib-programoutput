@@ -257,5 +257,5 @@ def setup(app):
                          '$ {command}\n{output}', 'env')
     app.add_directive('program-output', ProgramOutputDirective)
     app.add_directive('command-output', ProgramOutputDirective)
-    app.connect(str('builder-inited'), init_cache)
-    app.connect(str('doctree-read'), run_programs)
+    app.connect('builder-inited', init_cache)
+    app.connect('doctree-read', run_programs)
