@@ -131,19 +131,20 @@ class Command(_Command):
         Return the :class:`~subprocess.Popen` object representing the running
         command.
         """
-        if self.shell:
-            if sys.version_info[0] < 3 and isinstance(self.command, unicode):
-                command = self.command.encode(sys.getfilesystemencoding())
+        command = self.command
+        if (bytes is str
+            and not isinstance(command, str)
+            and hasattr(command, 'encode')):
+            # Python 2, given a unicode string
+            command = command.encode(sys.getfilesystemencoding())
+            assert isinstance(command, str)
+
+        if not self.shell:
+            if isinstance(command, str):
+                command = shlex.split(command)
             else:
                 command = self.command
-        else:
-            if sys.version_info[0] < 3 and isinstance(self.command, unicode):
-                command = shlex.split(self.command.encode(
-                    sys.getfilesystemencoding()))
-            elif isinstance(self.command, str):
-                command = shlex.split(self.command)
-            else:
-                command = self.command
+
         return Popen(command, shell=self.shell, stdout=PIPE,
                      stderr=PIPE if self.hide_standard_error else STDOUT,
                      cwd=self.working_directory)
@@ -162,9 +163,9 @@ class Command(_Command):
         return process.returncode, output
 
     def __str__(self):
-        if isinstance(self.command, tuple):
-            return repr(list(self.command))
-        return repr(self.command)
+        command = self.command
+        command = list(command) if isinstance(command, tuple) else command
+        return repr(command)
 
 
 class ProgramOutputCache(defaultdict):

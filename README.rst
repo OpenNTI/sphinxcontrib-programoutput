@@ -5,6 +5,11 @@ sphinxcontrib-programoutput
 .. image:: https://secure.travis-ci.org/NextThought/sphinxcontrib-programoutput.png
    :target: http://travis-ci.org/NextThought/sphinxcontrib-programoutput
 
+.. image:: https://coveralls.io/repos/github/NextThought/sphinxcontrib-programoutput/badge.svg
+   :target: https://coveralls.io/github/NextThought/sphinxcontrib-programoutput
+
+
+
 http://sphinxcontrib-programoutput.readthedocs.org
 
 A Sphinx_ extension to literally insert the output of arbitrary commands into

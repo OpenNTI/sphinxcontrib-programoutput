@@ -141,6 +141,8 @@ class AppMixin(object):
         app = self.app
         return app.env.get_doctree('content/doc')
 
+assert isinstance(AppMixin.app, Lazy) # coverage
+
 def with_content(content, **kwargs):
     def factory(f):
         def w(self):

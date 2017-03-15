@@ -9,6 +9,8 @@
 - The oldest supported and tested Sphinx version is now 1.3.5. See
   :issue:`17`.
 
+- 100% test coverage.
+
 0.8 (Oct 12, 2012)
 ==================
 
