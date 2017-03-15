@@ -11,6 +11,9 @@
 
 - 100% test coverage.
 
+- Remove support for ``programoutput_use_ansi``. The
+  ``sphinxcontrib.ansi`` extension is no longer available on PyPI.
+
 0.8 (Oct 12, 2012)
 ==================
 

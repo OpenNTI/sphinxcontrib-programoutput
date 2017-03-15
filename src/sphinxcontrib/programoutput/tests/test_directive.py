@@ -180,7 +180,6 @@ spam with eggs""")
         self.assert_output(self.doctree, '>> echo spam\n<< spam')
         self.assert_cache(self.app, 'echo spam', 'spam')
 
-
     @with_content("""\
     .. program-output:: echo spam
        :extraargs: with eggs""")
