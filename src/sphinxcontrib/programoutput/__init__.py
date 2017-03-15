@@ -133,8 +133,8 @@ class Command(_Command):
         """
         command = self.command
         if (bytes is str
-            and not isinstance(command, str)
-            and hasattr(command, 'encode')):
+                and not isinstance(command, str)
+                and hasattr(command, 'encode')):
             # Python 2, given a unicode string
             command = command.encode(sys.getfilesystemencoding())
             assert isinstance(command, str)
