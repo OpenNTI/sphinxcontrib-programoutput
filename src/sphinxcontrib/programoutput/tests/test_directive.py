@@ -50,6 +50,7 @@ class TestDirective(AppMixin,
     def assert_cache(self, app, cmd, output, use_shell=False,
                      hide_standard_error=False, returncode=0,
                      working_directory=None):
+        # pylint:disable=too-many-arguments
         cache = app.env.programoutput_cache
         working_directory = working_directory or app.srcdir
         working_directory = os.path.normpath(os.path.realpath(
@@ -76,7 +77,7 @@ class TestDirective(AppMixin,
 
         self.assert_output(self.doctree, 'spam with eggs')
         self.assert_cache(self.app, 'python -c \'print("spam with eggs")\'',
-                     'spam with eggs')
+                          'spam with eggs')
 
 
     @with_content("""\
@@ -105,7 +106,7 @@ class TestDirective(AppMixin,
         output = os.path.realpath(self.srcdir)
         self.assert_output(self.doctree, output)
         self.assert_cache(self.app, "python -c 'import os; print(os.getcwd())'", output,
-                     working_directory=str(self.srcdir))
+                          working_directory=str(self.srcdir))
 
 
     @with_content("""\
@@ -115,7 +116,7 @@ class TestDirective(AppMixin,
         output = os.path.realpath(self.srcdir)
         self.assert_output(self.doctree, output)
         self.assert_cache(self.app, "python -c 'import os; print(os.getcwd())'", output,
-                     working_directory=str(self.srcdir))
+                          working_directory=str(self.srcdir))
 
 
     @with_content("""\
@@ -126,7 +127,7 @@ class TestDirective(AppMixin,
         output = os.path.realpath(contentdir)
         self.assert_output(self.doctree, output)
         self.assert_cache(self.app, "python -c 'import os; print(os.getcwd())'", output,
-                     working_directory=str(contentdir))
+                          working_directory=str(contentdir))
 
 
     @with_content("""\
@@ -139,7 +140,7 @@ class TestDirective(AppMixin,
         output = os.path.realpath(contentdir)
         self.assert_output(doctree, output)
         self.assert_cache(self.app, 'echo "${PWD}"', output, use_shell=True,
-                     working_directory=str(contentdir))
+                          working_directory=str(contentdir))
 
 
     @with_content('.. program-output:: echo "${HOME}"')
@@ -175,7 +176,7 @@ spam with eggs""")
 
 
     @with_content('.. command-output:: echo spam',
-        programoutput_prompt_template='>> {command}\n<< {output}')
+                  programoutput_prompt_template='>> {command}\n<< {output}')
     def test_command_non_default_prompt(self):
         self.assert_output(self.doctree, '>> echo spam\n<< spam')
         self.assert_cache(self.app, 'echo spam', 'spam')
@@ -212,7 +213,7 @@ spam with eggs""")
     def test_ellipsis_stop_only(self):
         self.assert_output(self.doctree, 'spam\nwith\n...')
         self.assert_cache(self.app, 'python -c \'print("spam\\nwith\\neggs")\'',
-                     'spam\nwith\neggs')
+                          'spam\nwith\neggs')
 
 
     @with_content("""\
@@ -221,7 +222,7 @@ spam with eggs""")
     def test_ellipsis_negative_stop(self):
         self.assert_output(self.doctree, 'spam\n...')
         self.assert_cache(self.app, """python -c 'print("spam\\nwith\\neggs")'""",
-                     'spam\nwith\neggs')
+                          'spam\nwith\neggs')
 
 
     @with_content("""\
@@ -230,7 +231,7 @@ spam with eggs""")
     def test_ellipsis_start_and_stop(self):
         self.assert_output(self.doctree, 'spam\n...\neggs')
         self.assert_cache(self.app, """python -c 'print("spam\\nwith\\neggs")'""",
-                     'spam\nwith\neggs')
+                          'spam\nwith\neggs')
 
 
     @with_content("""\
@@ -239,7 +240,7 @@ spam with eggs""")
     def test_ellipsis_start_and_negative_stop(self):
         self.assert_output(self.doctree, 'spam\n...\neggs')
         self.assert_cache(self.app, """python -c 'print("spam\\nwith\\neggs")'""",
-                     'spam\nwith\neggs')
+                          'spam\nwith\neggs')
 
 
     @with_content("""\
@@ -278,7 +279,7 @@ spam with eggs""")
     @with_content("""\
 .. command-output:: python -c 'import sys; sys.exit(1)'
    :returncode: 1""",
-        programoutput_prompt_template='> {command}\n{output}\n[{returncode}]>')
+                  programoutput_prompt_template='> {command}\n{output}\n[{returncode}]>')
     def test_prompt_with_return_code(self):
         doctree = self.doctree
         app = self.app

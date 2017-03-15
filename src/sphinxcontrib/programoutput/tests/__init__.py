@@ -8,6 +8,8 @@ from sphinx.application import Sphinx
 
 from functools import update_wrapper
 
+# pylint:disable=no-self-use,protected-access,too-few-public-methods
+
 class Lazy(object):
 
     def __init__(self, func, name=None):
@@ -46,6 +48,7 @@ exclude_patterns = []
 pygments_style = 'sphinx'
 html_theme = 'default'
 """
+
 
 
 class AppMixin(object):
@@ -127,7 +130,7 @@ class AppMixin(object):
         return app
 
     @Lazy
-    def build_app(self):
+    def build_app(self): # pylint:disable=method-hidden
         return False
 
     @Lazy

@@ -32,8 +32,8 @@ from sphinxcontrib.programoutput import _slice
 class TestSlice(unittest.TestCase):
 
     def test_slice_simple(self):
-        assert _slice('2') == (2, None)
-        assert _slice('2,2') == (2, 2)
+        self.assertEqual(_slice('2'), (2, None))
+        self.assertEqual(_slice('2,2'), (2, 2))
 
 
     def test_slice_empty(self):

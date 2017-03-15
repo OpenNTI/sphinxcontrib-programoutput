@@ -3,6 +3,7 @@ include LICENSE
 include CHANGES.*
 include tox.ini
 include .travis.yml
+include .coveragerc
+include .pylintrc
 recursive-include src *.py
 recursive-include doc *.rst *.py
-recursive-include tests *.py
