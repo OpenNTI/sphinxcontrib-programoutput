@@ -159,7 +159,7 @@ class Command(_Command):
         """
         process = self.execute()
         output = process.communicate()[0].decode(
-            sys.getfilesystemencoding()).rstrip()
+            sys.getfilesystemencoding(), 'replace').rstrip()
         return process.returncode, output
 
     def __str__(self):

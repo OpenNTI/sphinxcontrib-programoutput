@@ -1,7 +1,10 @@
 0.10 (unreleased)
 =================
 
-- Nothing changed yet.
+- Decode output from the program tolerantly, using the 'replace'
+  handler. Based on a `pull request
+  <https://github.com/habnabit/sphinxcontrib-programoutput/commit/592078e0386c2a36d50a6528b6e49d91707138bf>`_
+  by Stefan C. Müller.
 
 
 0.9 (2017-03-15)
