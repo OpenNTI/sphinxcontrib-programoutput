@@ -45,13 +45,15 @@ tests_require = [
 ]
 
 setup(
-    name='nti.sphinxcontrib-programoutput',
+    name='sphinxcontrib-programoutput',
     version=read_version_number(),
     url='https://sphinxcontrib-programoutput.readthedocs.org/',
     download_url='https://pypi.python.org/pypi/sphinxcontrib-programoutput',
     license='BSD',
     author='Sebastian Wiesner',
     author_email='lunaryorn@gmail.com',
+    maintainer="Jason Madden",
+    maintainer_email='jason@nextthought.com',
     description='Sphinx extension to include program output',
     long_description=read_desc(),
     zip_safe=False,

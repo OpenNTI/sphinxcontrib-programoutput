@@ -21,15 +21,10 @@ Installation
 
 Install this extension from PyPI_::
 
-   pip install nti.sphinxcontrib-programoutput
+   pip install sphinxcontrib-programoutput
 
 The extension requires Sphinx 1.3.5 and Python 2.7 or Python 3 (Python
 3.5+ is tested) at least.
-
-.. note:: This is a fork of the older and now unmaintained
-		  distribution `sphinxcontrib-programoutput
-		  <http://pypi.python.org/pypi/sphinxcontrib-programoutput>`_.
-		  The installation name is different, but the usage is the same.
 
 Usage
 =====
