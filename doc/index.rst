@@ -18,7 +18,7 @@ Installation
 
 Use ``pip`` to install this extension from PyPI_::
 
-   pip install nti.sphinxcontrib-programoutput
+   pip install sphinxcontrib-programoutput
 
 The extension requires Sphinx 1.3 and Python 2.7 or Python 3 at least.
 
@@ -295,7 +295,7 @@ License
 
 
 .. _Sphinx: http://www.sphinx-doc.org/en/stable/
-.. _PyPI: https://pypi.python.org/pypi/nti.sphinxcontrib-programoutput
+.. _PyPI: https://pypi.python.org/pypi/sphinxcontrib-programoutput
 .. _github: https://github.com/NextThought/sphinxcontrib-programoutput
 .. _readme: https://github.com/NextThought/sphinxcontrib-programoutput/blob/master/README.rst
 .. _format string: https://docs.python.org/2/library/string.html#formatstrings
