@@ -1,4 +1,4 @@
-0.10 (unreleased)
+0.10 (2017-03-17)
 =================
 
 - Decode output from the program tolerantly, using the 'replace'
