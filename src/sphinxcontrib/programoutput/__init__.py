@@ -259,3 +259,7 @@ def setup(app):
     app.add_directive('command-output', ProgramOutputDirective)
     app.connect('builder-inited', init_cache)
     app.connect('doctree-read', run_programs)
+    metadata = {
+        'parallel_read_safe': True
+    }
+    return metadata

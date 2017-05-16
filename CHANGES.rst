@@ -1,7 +1,10 @@
 0.11 (unreleased)
 =================
 
-- Nothing changed yet.
+- Explicitly set ``parallel_read_safe`` to true in the extension
+  metadata. See `issue 25
+  <https://github.com/NextThought/sphinxcontrib-programoutput/issues/25>`_.
+  With thanks to Adam J. Stewart and Stephen McDowell.
 
 0.10 (2017-03-17)
 =================
