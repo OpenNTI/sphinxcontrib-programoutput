@@ -248,7 +248,7 @@ spam with eggs""")
     def test_unexpected_return_code(self):
         with self.assertRaises(SphinxWarning) as excinfo:
             self.app.build()
-        self.assertIn('WARNING: Unexpected return code 1 from command',
+        self.assertIn('Unexpected return code 1 from command',
                       excinfo.exception.args[0])
         self.assertIn("python -c 'import sys; sys.exit(1)'",
                       excinfo.exception.args[0])
@@ -260,7 +260,7 @@ spam with eggs""")
     def test_shell_with_unexpected_return_code(self):
         with self.assertRaises(SphinxWarning) as excinfo:
             self.app.build()
-        self.assertIn('WARNING: Unexpected return code 1 from command',
+        self.assertIn('Unexpected return code 1 from command',
                       excinfo.exception.args[0])
         self.assertIn("python -c 'import sys; sys.exit(1)'",
                       excinfo.exception.args[0])
