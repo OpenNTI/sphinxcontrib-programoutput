@@ -1,4 +1,4 @@
-0.11 (unreleased)
+0.11 (2017-05-18)
 =================
 
 - Explicitly set ``parallel_read_safe`` to true in the extension
@@ -12,7 +12,7 @@
 - Decode output from the program tolerantly, using the 'replace'
   handler. Based on a `pull request
   <https://github.com/habnabit/sphinxcontrib-programoutput/commit/592078e0386c2a36d50a6528b6e49d91707138bf>`_
-  by Stefan C. Müller.
+  by Stefan C. MÃ¼ller.
 
 
 0.9 (2017-03-15)
