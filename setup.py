@@ -56,6 +56,7 @@ setup(
     maintainer_email='jason@nextthought.com',
     description='Sphinx extension to include program output',
     long_description=read_desc(),
+    keywords="sphinx cli command output program example",
     zip_safe=False,
     classifiers=[
         'Development Status :: 5 - Production/Stable',
