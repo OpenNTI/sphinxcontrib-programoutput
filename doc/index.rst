@@ -194,7 +194,7 @@ Reference
 
    If the ``prompt`` option is given, the ``command`` itself is included in the
    document, so that the output mimics input in a shell prompt.
-   :confval:`programoutput_prompt_template` controlls the appearance of this.
+   :confval:`programoutput_prompt_template` controls the appearance of this.
    The value of the ``extraargs`` option is appended at the end of ``command``
    (separated by a whitespace) before executing the command, but not included
    in the output of the ``prompt`` option.  Use this to pass extra arguments
