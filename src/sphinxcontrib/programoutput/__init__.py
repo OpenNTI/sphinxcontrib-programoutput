@@ -41,10 +41,14 @@ import shlex
 from subprocess import Popen, PIPE, STDOUT
 from collections import defaultdict, namedtuple
 
+from sphinx.util import logging
+
 from docutils import nodes
 from docutils.parsers import rst
 from docutils.parsers.rst.directives import flag, unchanged, nonnegative_int
 
+
+logger = logging.getLogger('sphinxcontrib.programoutput')
 
 __version__ = '0.12.dev0'
 
@@ -220,8 +224,8 @@ def run_programs(app, doctree):
             node.replace_self(error_node)
         else:
             if returncode != node['returncode']:
-                app.warn('Unexpected return code {0} from command {1}'.format(
-                    returncode, command))
+                logger.warn('Unexpected return code {0} from command {1}'
+                            .format(returncode, command))
 
             # replace lines with ..., if ellipsis is specified
             if 'strip_lines' in node:
