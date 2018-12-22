@@ -1,4 +1,4 @@
-0.13 (unreleased)
+0.13 (2018-12-22)
 =================
 
 - Drop support for Sphinx < 1.7.
