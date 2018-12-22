@@ -295,7 +295,7 @@ spam with eggs""")
     def test_non_existing_executable(self):
         # check that a proper error message appears in the document
         message = self.doctree.next_node(system_message)
-        assert message
+        self.assertTrue(message)
         srcfile = os.path.join(self.srcdir, 'content', 'doc.rst')
         self.assertEqual(message['source'], srcfile)
         self.assertEqual(message['line'], 5)
@@ -314,7 +314,7 @@ spam with eggs""")
         doctree = self.doctree
         srcdir = self.srcdir
         message = doctree.next_node(system_message)
-        assert message
+        self.assertTrue(message)
         srcfile = os.path.join(srcdir, 'content', 'doc.rst')
         self.assertEqual(message['source'], srcfile)
         self.assertEqual(message['line'], 5)

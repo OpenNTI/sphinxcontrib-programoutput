@@ -36,8 +36,8 @@ class TestSetup(AppMixin,
 
     def test_init_cache(self):
         app = self.app
-        assert isinstance(app.env.programoutput_cache, ProgramOutputCache)
-        assert not app.env.programoutput_cache
+        self.assertIsInstance(app.env.programoutput_cache, ProgramOutputCache)
+        self.assertFalse(app.env.programoutput_cache)
 
 def test_suite():
     return unittest.defaultTestLoader.loadTestsFromName(__name__)

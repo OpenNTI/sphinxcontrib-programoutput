@@ -1,24 +1,26 @@
 language: python
-sudo: false
 git:
   depth: 1
 python:
-  - pypy-5.4.1
   - 2.7
   - 3.5
-# Pylint is not supported on 3.6 yet. See
-# https://github.com/PyCQA/pylint/issues/1113 et al.
-env:
-  matrix:
-    - ENV=latest
-    - ENV=oldest
+  - 3.6
+  - pypy
+  - pypy3
 matrix:
-# Only run the oldest environment once
-  exclude:
-    - python: 3.6
-      env: ENV=oldest
-    - python: pypy-5.4.1
-      env: ENV=oldest
+    include:
+        - python: "3.7"
+          dist: xenial
+
+
+before_install:
+  - python --version
+
+install:
+  - pip install -U pip setuptools
+  - pip install -U coverage coveralls pylint
+  - pip install -U -e .[test]
+
 script:
   - pylint -r no src/sphinxcontrib
   - coverage run setup.py test
@@ -27,14 +29,6 @@ after_success:
 notifications:
   email: false
 
-before_install:
-  - python --version
-
-install:
-  - pip install -U pip setuptools
-  - pip install -U coverage coveralls pylint
-  - if [[ $ENV == latest ]]; then pip install -U -e .[test]; fi
-  - if [[ $ENV == oldest ]]; then pip install Sphinx==1.3.5 && pip install -e .[test]; fi
 
 cache: pip
 
