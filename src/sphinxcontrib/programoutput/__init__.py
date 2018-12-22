@@ -45,9 +45,11 @@ from docutils import nodes
 from docutils.parsers import rst
 from docutils.parsers.rst.directives import flag, unchanged, nonnegative_int
 
+from sphinx.util import logging as sphinx_logging
 
-__version__ = '0.12.dev0'
+__version__ = '0.13.dev0'
 
+logger = sphinx_logging.getLogger('contrib.programoutput')
 
 class program_output(nodes.Element):
     pass
@@ -217,11 +219,18 @@ def run_programs(app, doctree):
         except EnvironmentError as error:
             error_message = 'Command {0} failed: {1}'.format(command, error)
             error_node = doctree.reporter.error(error_message, base_node=node)
+            # Sphinx 1.8.0b1 started dropping all system_message nodes with a
+            # level less than 5 by default (or 2 if `keep_warnings` is set to true).
+            # This appears to be undocumented. Reporting failures is an important
+            # part of what this extension does, so we raise the default level.
+            error_node['level'] = 6
             node.replace_self(error_node)
         else:
             if returncode != node['returncode']:
-                app.warn('Unexpected return code {0} from command {1}'.format(
-                    returncode, command))
+                logger.warning(
+                    'Unexpected return code %s from command %s',
+                    returncode, command
+                )
 
             # replace lines with ..., if ellipsis is specified
             if 'strip_lines' in node:
@@ -238,6 +247,7 @@ def run_programs(app, doctree):
             new_node = node_class(output, output)
             new_node['language'] = 'text'
             node.replace_self(new_node)
+
 
 
 def init_cache(app):

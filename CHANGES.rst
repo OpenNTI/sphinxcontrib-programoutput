@@ -1,7 +1,16 @@
-0.12 (unreleased)
+0.13 (unreleased)
 =================
 
-- Nothing changed yet.
+- Drop support for Sphinx < 1.7.
+
+- Fix tests on Sphinx >= 1.8.0.
+
+- Restore error message into the document by default from failed
+  program runs on Sphinx >= 1.8.0b1.
+
+- Fix deprecation warnings on Sphinx >= 1.8. Reported in `issue 29
+  <https://github.com/NextThought/sphinxcontrib-programoutput/issues/29>`_
+  by miili.
 
 
 0.11 (2017-05-18)

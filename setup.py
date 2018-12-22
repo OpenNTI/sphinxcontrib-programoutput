@@ -48,7 +48,7 @@ setup(
     name='sphinxcontrib-programoutput',
     version=read_version_number(),
     url='https://sphinxcontrib-programoutput.readthedocs.org/',
-    download_url='https://pypi.python.org/pypi/sphinxcontrib-programoutput',
+    download_url='https://pypi.org/project/sphinxcontrib-programoutput/',
     license='BSD',
     author='Sebastian Wiesner',
     author_email='lunaryorn@gmail.com',
@@ -69,6 +69,7 @@ setup(
         "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: Implementation :: CPython",
         "Programming Language :: Python :: Implementation :: PyPy",
         'Topic :: Documentation',
@@ -80,7 +81,7 @@ setup(
     namespace_packages=['sphinxcontrib'],
     include_package_data=True,
     install_requires=[
-        'Sphinx>=1.3.5',
+        'Sphinx>=1.7.0',
     ],
     tests_require=tests_require,
     extras_require={

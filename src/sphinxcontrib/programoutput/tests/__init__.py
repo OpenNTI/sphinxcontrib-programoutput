@@ -4,6 +4,7 @@ import shutil
 import tempfile
 
 from docutils.parsers.rst import directives
+from docutils.parsers.rst import roles
 from sphinx.application import Sphinx
 
 from functools import update_wrapper
@@ -60,9 +61,12 @@ class AppMixin(object):
         # sphinxcontrib.programoutput: directive u'program-output' is
         # already registered, it will be overridden".
         self.directives = directives._directives.copy()
+        # Likewise for 'eq'
+        self.roles = roles._roles.copy()
 
     def tearDown(self):
         directives._directives = self.directives
+        roles._roles = self.roles
 
     @Lazy
     def tmpdir(self):
