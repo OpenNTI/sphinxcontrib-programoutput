@@ -10,6 +10,8 @@ from sphinx.application import Sphinx
 from functools import update_wrapper
 
 # pylint:disable=no-self-use,protected-access,too-few-public-methods
+# useless-object-inheritance is version specific
+# pylint:disable=bad-option-value,useless-object-inheritance
 
 class Lazy(object):
 
