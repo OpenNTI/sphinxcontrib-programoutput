@@ -189,6 +189,14 @@ spam with eggs""")
         self.assert_cache(self.app, 'echo spam with eggs', 'spam with eggs')
 
 
+    @with_content(u'.. command-output:: echo "U+2264 ≤ LESS-THAN OR EQUAL TO"')
+    def test_prompt_with_utf8(self):
+        self.assert_output(self.doctree, u"""\
+$ echo "U+2264 ≤ LESS-THAN OR EQUAL TO"
+U+2264 ≤ LESS-THAN OR EQUAL TO""")
+        self.assert_cache(self.app, u'echo "U+2264 ≤ LESS-THAN OR EQUAL TO"', u'U+2264 ≤ LESS-THAN OR EQUAL TO')
+
+
     @with_content('''\
     .. program-output:: echo
        :shell:
