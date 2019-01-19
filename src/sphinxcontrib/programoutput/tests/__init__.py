@@ -1,3 +1,4 @@
+import codecs
 import os
 import os.path
 import shutil
@@ -96,7 +97,7 @@ class AppMixin(object):
         content_directory = os.path.join(srcdir, 'content')
         os.mkdir(content_directory)
         content_document = os.path.join(content_directory, 'doc.rst')
-        with open(content_document, 'w') as f:
+        with codecs.open(content_document, encoding='utf-8', mode='w') as f:
             f.write("=====\n")
             f.write("Title\n")
             f.write("=====\n\n")
