@@ -264,7 +264,7 @@ def init_cache(app):
 
 def setup(app):
     app.add_config_value('programoutput_prompt_template',
-                         '$ {command}\n{output}', 'env')
+                         u'$ {command}\n{output}', 'env')
     app.add_directive('program-output', ProgramOutputDirective)
     app.add_directive('command-output', ProgramOutputDirective)
     app.connect('builder-inited', init_cache)
