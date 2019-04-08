@@ -244,7 +244,8 @@ spam with eggs""")
 
 
     @with_content("""\
-    .. program-output:: python -c 'import sys; sys.exit(1)'""")
+    .. program-output:: python -c 'import sys; sys.exit(1)'""",
+                  ignore_warnings=False)
     def test_unexpected_return_code(self):
         with self.assertRaises(SphinxWarning) as excinfo:
             self.app.build()
@@ -256,7 +257,8 @@ spam with eggs""")
 
     @with_content("""\
     .. program-output:: python -c 'import sys; sys.exit(1)'
-       :shell:""")
+       :shell:""",
+                  ignore_warnings=False)
     def test_shell_with_unexpected_return_code(self):
         with self.assertRaises(SphinxWarning) as excinfo:
             self.app.build()

@@ -29,7 +29,11 @@ from setuptools import setup, find_packages
 
 def read_desc():
     with open('README.rst') as stream:
-        return stream.read()
+        readme = stream.read()
+    with open('CHANGES.rst') as stream:
+        changes = stream.read()
+
+    return readme + '\n\n' + changes
 
 def read_version_number():
     VERSION_PATTERN = re.compile(r"__version__ = '([^']+)'")
@@ -48,7 +52,6 @@ setup(
     name='sphinxcontrib-programoutput',
     version=read_version_number(),
     url='https://sphinxcontrib-programoutput.readthedocs.org/',
-    download_url='https://pypi.org/project/sphinxcontrib-programoutput/',
     license='BSD',
     author='Sebastian Wiesner',
     author_email='lunaryorn@gmail.com',
@@ -74,6 +77,8 @@ setup(
         "Programming Language :: Python :: Implementation :: PyPy",
         'Topic :: Documentation',
         'Topic :: Utilities',
+        'Framework :: Sphinx',
+        'Framework :: Sphinx :: Extension',
     ],
     platforms='any',
     packages=find_packages('src'),
@@ -87,5 +92,6 @@ setup(
     extras_require={
         'test': tests_require,
     },
+    python_requires=">=2.7,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*",
     test_suite='sphinxcontrib.programoutput.tests',
 )

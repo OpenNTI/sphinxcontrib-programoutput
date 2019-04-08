@@ -1,8 +1,14 @@
+=========
+ Changes
+=========
+
 0.14 (unreleased)
 =================
 
-- Nothing changed yet.
+- Add ``python_requires`` metadata to better allow tools like ``pip``
+  to install a correct version.
 
+- Add support for Sphinx 2.0 on Python 3.
 
 0.13 (2018-12-22)
 =================
@@ -33,7 +39,7 @@
 - Decode output from the program tolerantly, using the 'replace'
   handler. Based on a `pull request
   <https://github.com/habnabit/sphinxcontrib-programoutput/commit/592078e0386c2a36d50a6528b6e49d91707138bf>`_
-  by Stefan C. MÃ¼ller.
+  by Stefan C. Müller.
 
 
 0.9 (2017-03-15)
@@ -45,7 +51,9 @@
 - Run the tests on Travis CI. Formatting and style is enforced by pylint.
 
 - The oldest supported and tested Sphinx version is now 1.3.5. See
-  :issue:`17`.
+  `issue 17
+  <https://github.com/NextThought/sphinxcontrib-programoutput/issues/17>`_.
+
 
 - Remove support for Python 2.6, Python 3.2 and 3.3.
 
@@ -63,7 +71,7 @@
 0.7 (Apr 17, 2012)
 ==================
 
-- Added ``cwd`` option to :rst:dir:`program-output`
+- Added ``cwd`` option to ``..program-output``
 - Working directory of executed programs defaults to documentation root now
 
 
@@ -77,16 +85,16 @@
 0.5 (Sep 19, 2011)
 ==================
 
-- :confval:`programoutput_prompt_template` is interpreted as format string now!
+- ``programoutput_prompt_template`` is interpreted as format string now!
 - Require Python 2.6 now
-- Added ``returncode`` option to :rst:dir:`program-output` (thanks to Jan-Marek
-  Glogowski)
+- Added ``returncode`` option to ``program-output`` (thanks to
+  Jan-Marek Glogowski)
 - Support ``returncode`` formatting key in
-  :confval:`programoutput_prompt_template`
+  ``programoutput_prompt_template``
 - Warn on unexpected return codes instead of raising
-  :py:exc:`~subprocess.CalledProcessError`
-- Turn fatal errors during command into document error messages instead of
-  crashing the build
+  ``subprocess.CalledProcessError``
+- Turn fatal errors during command into document error messages
+  instead of crashing the build
 
 
 0.4.1 (Mar 11, 2011)

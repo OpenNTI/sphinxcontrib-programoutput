@@ -9,8 +9,7 @@
    :target: https://coveralls.io/github/NextThought/sphinxcontrib-programoutput
 
 
-
-http://sphinxcontrib-programoutput.readthedocs.org
+https://sphinxcontrib-programoutput.readthedocs.org
 
 A Sphinx_ extension to literally insert the output of arbitrary commands into
 documents, helping you to keep your command examples up to date.
@@ -23,7 +22,7 @@ Install this extension from PyPI_::
 
    pip install sphinxcontrib-programoutput
 
-The extension requires Sphinx 1.3.5 and Python 2.7 or Python 3 (Python
+The extension requires Sphinx 1.7.0 and Python 2.7 or Python 3 (Python
 3.5+ is tested) at least.
 
 Usage
