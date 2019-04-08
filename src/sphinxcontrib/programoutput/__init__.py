@@ -195,6 +195,20 @@ class ProgramOutputCache(defaultdict):
         return result
 
 
+def _prompt_template_as_unicode(app):
+    tmpl = app.config.programoutput_prompt_template
+    if isinstance(tmpl, bytes):
+        for enc in 'utf-8', sys.getfilesystemencoding():
+            try:
+                tmpl = tmpl.decode(enc)
+            except UnicodeError: # pragma: no cover
+                pass
+            else:
+                app.config.programoutput_prompt_template = tmpl
+                break
+    return tmpl
+
+
 def run_programs(app, doctree):
     """
     Execute all programs represented by ``program_output`` nodes in
@@ -233,16 +247,29 @@ def run_programs(app, doctree):
                 )
 
             # replace lines with ..., if ellipsis is specified
+
+            # Recall that `output` is guaranteed to be a unicode string on
+            # all versions of Python.
             if 'strip_lines' in node:
-                lines = output.splitlines()
                 start, stop = node['strip_lines']
-                lines[start:stop] = ['...']
-                output = '\n'.join(lines)
+                lines = output.splitlines()
+                lines[start:stop] = [u'...']
+                output = u'\n'.join(lines)
 
             if node['show_prompt']:
-                tmpl = app.config.programoutput_prompt_template
-                output = tmpl.format(command=node['command'], output=output,
-                                     returncode=returncode)
+                # The command in the node is also guaranteed to be
+                # unicode, but the prompt template might not be. This
+                # could be a native string on Python 2, or one with an
+                # explicit b prefix on 2 or 3 (for some reason).
+                # Attempt to decode it using UTF-8, preferentially, or
+                # fallback to sys.getfilesystemencoding(). If all that fails, fall back
+                # to the default encoding (which may have often worked before).
+                prompt_template = _prompt_template_as_unicode(app)
+                output = prompt_template.format(
+                    command=node['command'],
+                    output=output,
+                    returncode=returncode
+                )
 
             new_node = node_class(output, output)
             new_node['language'] = 'text'

@@ -267,8 +267,6 @@ spam with eggs""")
         self.assertIn("python -c 'import sys; sys.exit(1)'",
                       excinfo.exception.args[0])
 
-
-
     @with_content("""\
     .. program-output:: python -c 'import sys; print("foo"); sys.exit(1)'
        :returncode: 1""")
@@ -276,7 +274,6 @@ spam with eggs""")
         self.assert_output(self.doctree, 'foo')
         self.assert_cache(self.app, 'python -c \'import sys; print("foo"); sys.exit(1)\'',
                           'foo', returncode=1)
-
 
     @with_content("""\
 .. command-output:: python -c 'import sys; sys.exit(1)'
@@ -292,7 +289,6 @@ spam with eggs""")
         self.assert_cache(app, "python -c 'import sys; sys.exit(1)'", '',
                           returncode=1)
 
-
     @with_content(u".. program-output:: 'spam with eggs'", ignore_warnings=True)
     def test_non_existing_executable(self):
         # check that a proper error message appears in the document
@@ -306,7 +302,6 @@ spam with eggs""")
         self.assertIn(srcfile, message_text)
         self.assertIn('spam with eggs', message_text)
         self.assertIn("Errno", message_text)
-
 
     @with_content("""\
     .. program-output:: echo spam
@@ -325,6 +320,45 @@ spam with eggs""")
         self.assertIn(srcfile, message_text)
         self.assertIn('subdir', message_text)
         self.assertIn("No such file or directory", message_text)
+
+    @with_content(u'.. command-output:: echo "U+2264 ≤ LESS-THAN OR EQUAL TO"')
+    def test_default_prompt_with_unicode_output(self):
+        self.assert_output(
+            self.doctree, u"""\
+$ echo "U+2264 ≤ LESS-THAN OR EQUAL TO"
+U+2264 ≤ LESS-THAN OR EQUAL TO""")
+        self.assert_cache(
+            self.app,
+            u'echo "U+2264 ≤ LESS-THAN OR EQUAL TO"',
+            u'U+2264 ≤ LESS-THAN OR EQUAL TO')
+
+    @with_content(u'.. command-output:: echo "U+2264 ≤ LESS-THAN OR EQUAL TO"',
+                  programoutput_prompt_template=b'> {command}\n{output}')
+    def test_bytes_prompt_with_unicode_output(self):
+        self.assert_output(
+            self.doctree, u"""\
+> echo "U+2264 ≤ LESS-THAN OR EQUAL TO"
+U+2264 ≤ LESS-THAN OR EQUAL TO""")
+        self.assert_cache(
+            self.app,
+            u'echo "U+2264 ≤ LESS-THAN OR EQUAL TO"',
+            u'U+2264 ≤ LESS-THAN OR EQUAL TO')
+
+    @with_content("""\
+    .. program-output:: echo -e "U+2264 ≤ LESS-THAN OR EQUAL TO\\n≤ line2\\n≤ line3"
+        :ellipsis: 2
+    """)
+    def test_unicode_output_with_ellipsis(self):
+        self.assert_output(
+            self.doctree, u"""\
+U+2264 \u2264 LESS-THAN OR EQUAL TO\n\u2264 line2\n..."""
+        )
+        self.assert_cache(
+            self.app,
+            u'echo -e "U+2264 ≤ LESS-THAN OR EQUAL TO\\n≤ line2\\n≤ line3"',
+            u'U+2264 \u2264 LESS-THAN OR EQUAL TO\n\u2264 line2\n\u2264 line3'
+        )
+
 
 def test_suite():
     return unittest.defaultTestLoader.loadTestsFromName(__name__)

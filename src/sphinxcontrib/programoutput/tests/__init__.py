@@ -76,7 +76,16 @@ def _find_duplicate_default_nodes():
 
 class AppMixin(object):
 
+    #: The contents of the main 'doc.rst' document.
+    #:
+    #: This will be written as a bytestring to the document, allowing for
+    #: the document to be in an arbitrary encoding.
+    #:
+    #: If this object is not a bytestring, it will first be encoded using
+    #: the encoding named in `self.document_encoding`.
     document_content = '=============\ndummy content\n=============\n'
+
+    document_encoding = 'utf-8'
 
     duplicate_nodes_to_remove = _find_duplicate_default_nodes()
 
@@ -125,11 +134,16 @@ class AppMixin(object):
         content_directory = os.path.join(srcdir, 'content')
         os.mkdir(content_directory)
         content_document = os.path.join(content_directory, 'doc.rst')
-        with open(content_document, 'w') as f:
-            f.write("=====\n")
-            f.write("Title\n")
-            f.write("=====\n\n")
-            f.write(self.document_content)
+        contents = self.document_content
+        if not isinstance(contents, bytes):
+            contents = contents.encode(self.document_encoding)
+
+        with open(content_document, 'wb') as f:
+            f.write(b"=====\n")
+            f.write(b"Title\n")
+            f.write(b"=====\n\n")
+
+            f.write(contents)
 
         return srcdir
 
