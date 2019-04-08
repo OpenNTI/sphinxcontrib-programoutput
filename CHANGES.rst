@@ -2,7 +2,7 @@
  Changes
 =========
 
-0.14 (unreleased)
+0.14 (2019-04-08)
 =================
 
 - Add ``python_requires`` metadata to better allow tools like ``pip``
