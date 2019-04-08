@@ -10,6 +10,13 @@
 
 - Add support for Sphinx 2.0 on Python 3.
 
+- Avoid unicode errors when the program command or output produced
+  non-ASCII output and the configured prompt was a byte string. This
+  was most likely under Python 2, where the default configured prompt
+  is a byte string. Reported by, and patch inspired by, `issue 33
+  <https://github.com/NextThought/sphinxcontrib-programoutput/issues/33>`_
+  by latricewilgus.
+
 0.13 (2018-12-22)
 =================
 
