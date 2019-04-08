@@ -3,6 +3,7 @@ import os.path
 import shutil
 import tempfile
 
+from docutils import nodes
 from docutils.parsers.rst import directives
 from docutils.parsers.rst import roles
 from sphinx.application import Sphinx
@@ -52,19 +53,47 @@ pygments_style = 'sphinx'
 html_theme = 'default'
 """
 
+def _find_duplicate_default_nodes():
+    from sphinx import addnodes
 
+    class App(object):
+
+        def __init__(self):
+            self.nodes = set()
+
+        def add_node(self, node):
+            self.nodes.add(node.__name__)
+
+
+    app = App()
+    try:
+        addnodes.setup(app)
+    except AttributeError:
+        # Sphinx 1 doesn't have this
+        pass
+
+    return app.nodes
 
 class AppMixin(object):
 
     document_content = '=============\ndummy content\n=============\n'
 
+    duplicate_nodes_to_remove = _find_duplicate_default_nodes()
+
     def setUp(self):
         # Avoid "WARNING: while setting up extension
         # sphinxcontrib.programoutput: directive u'program-output' is
         # already registered, it will be overridden".
+        # This may only be needed for Sphinx 1.
         self.directives = directives._directives.copy()
         # Likewise for 'eq'
         self.roles = roles._roles.copy()
+
+        # Avoid "node class 'toctree' is already registered, its visitors will be overridden"
+        # By default this class has *no* `visit_` methods
+        for node in self.duplicate_nodes_to_remove:
+            if hasattr(nodes.GenericNodeVisitor, 'visit_' + node):
+                delattr(nodes.GenericNodeVisitor, 'visit_' + node)
 
     def tearDown(self):
         directives._directives = self.directives
@@ -141,7 +170,7 @@ class AppMixin(object):
 
     @Lazy
     def ignore_warnings(self):
-        return False
+        return True
 
     @Lazy
     def doctree(self):
