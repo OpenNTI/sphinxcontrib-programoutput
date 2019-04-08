@@ -1,4 +1,3 @@
-dist: xenial
 group: travis_latest
 language: python
 git:
