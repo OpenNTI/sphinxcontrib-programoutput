@@ -62,5 +62,5 @@ extlinks = {
 }
 
 def setup(app):
-    app.add_description_unit('confval', 'confval',
-                             'pair: %s; configuration value')
+    app.add_object_type('confval', 'confval',
+                        'pair: %s; configuration value')
