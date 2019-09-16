@@ -25,6 +25,7 @@
 
 from __future__ import print_function, division, absolute_import
 
+import sys
 import unittest
 import tempfile
 import shutil
@@ -108,14 +109,14 @@ class TestCommand(unittest.TestCase):
 
     def test_get_output_non_zero(self):
         returncode, output = Command(
-            'python -c "import sys; print(\'spam\'); sys.exit(1)"').get_output()
+            sys.executable + ' -c "import sys; print(\'spam\'); sys.exit(1)"').get_output()
         self.assertEqual(returncode, 1)
         self.assertEqual(output, 'spam')
 
 
     def test_get_output_with_hidden_standard_error(self):
         returncode, output = Command(
-            'python -c "import sys; sys.stderr.write(\'spam\')"',
+            sys.executable + ' -c "import sys; sys.stderr.write(\'spam\')"',
             hide_standard_error=True).get_output()
         self.assertEqual(returncode, 0)
         self.assertEqual(output, '')
@@ -125,7 +126,7 @@ class TestCommand(unittest.TestCase):
         tmpdir = tempfile.mkdtemp()
         cwd = os.path.realpath(str(tmpdir))
         returncode, output = Command(
-            'python -c "import sys, os; sys.stdout.write(os.getcwd())"',
+            sys.executable + ' -c "import sys, os; sys.stdout.write(os.getcwd())"',
             working_directory=cwd).get_output()
         self.assertEqual(returncode, 0)
         self.assertEqual(output, cwd)

@@ -194,17 +194,3 @@ class AppMixin(object):
         return app.env.get_doctree('content/doc')
 
 assert isinstance(AppMixin.app, Lazy) # coverage
-
-def with_content(content, **kwargs):
-    def factory(f):
-        def w(self):
-            self.document_content = content
-            if kwargs:
-                if 'ignore_warnings' in kwargs:
-                    getattr(self, 'ignore_warnings')
-                    self.ignore_warnings = kwargs.pop("ignore_warnings")
-                getattr(self, 'confoverrides')
-                self.confoverrides = kwargs
-            f(self)
-        return w
-    return factory
