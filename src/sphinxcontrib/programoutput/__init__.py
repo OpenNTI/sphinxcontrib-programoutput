@@ -47,7 +47,7 @@ from docutils.parsers.rst.directives import flag, unchanged, nonnegative_int
 
 from sphinx.util import logging as sphinx_logging
 
-__version__ = '0.15.dev0'
+__version__ = '0.15'
 
 logger = sphinx_logging.getLogger('contrib.programoutput')
 

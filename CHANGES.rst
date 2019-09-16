@@ -2,7 +2,7 @@
  Changes
 =========
 
-0.15 (unreleased)
+0.15 (2019-09-16)
 =================
 
 - Make the test suite stop assuming the presence of a 'python'
