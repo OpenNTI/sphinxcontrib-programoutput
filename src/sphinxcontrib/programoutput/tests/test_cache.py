@@ -27,6 +27,7 @@ from __future__ import print_function, division, absolute_import
 
 import os
 import pickle
+import sys
 import unittest
 
 from sphinxcontrib.programoutput import ProgramOutputCache, Command
@@ -58,7 +59,7 @@ class TestCache(AppMixin,
         cwd = os.path.join(self.tmpdir, 'wd')
         os.mkdir(cwd)
         cwd = os.path.realpath(os.path.normpath(str(cwd)))
-        cmd = ['python', '-c', 'import sys, os; sys.stdout.write(os.getcwd())']
+        cmd = [sys.executable, '-c', 'import sys, os; sys.stdout.write(os.getcwd())']
         self.assert_cache(cache, Command(cmd, working_directory=cwd), cwd)
 
 
@@ -73,19 +74,19 @@ class TestCache(AppMixin,
 
     def test_hidden_standard_error(self):
         cache = ProgramOutputCache()
-        cmd = ['python', '-c', 'import sys; sys.stderr.write("spam")']
+        cmd = [sys.executable, '-c', 'import sys; sys.stderr.write("spam")']
         self.assert_cache(cache, Command(cmd, hide_standard_error=True), '')
 
 
     def test_nonzero_return_code(self):
         cache = ProgramOutputCache()
-        cmd = ['python', '-c', 'import sys; sys.exit(1)']
+        cmd = [sys.executable, '-c', 'import sys; sys.exit(1)']
         self.assert_cache(cache, Command(cmd), '', returncode=1)
 
 
     def test_nonzero_return_code_shell(self):
         cache = ProgramOutputCache()
-        cmd = "python -c 'import sys; sys.exit(1)'"
+        cmd = sys.executable + " -c 'import sys; sys.exit(1)'"
         self.assert_cache(cache, Command(cmd, shell=True), '', returncode=1)
 
     def test_cache_pickled(self):

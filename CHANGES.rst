@@ -5,7 +5,12 @@
 0.15 (unreleased)
 =================
 
-- Nothing changed yet.
+- Make the test suite stop assuming the presence of a 'python'
+  executable on the path. Instead it uses ``sys.executable`` (which
+  shouldn't have spaces). Note that it does continue to assume the
+  presence of other executables, such as 'echo'. Reported in `issue 38
+  <https://github.com/NextThought/sphinxcontrib-programoutput/issues/38>`_
+  by John Vandenberg.
 
 
 0.14 (2019-04-08)

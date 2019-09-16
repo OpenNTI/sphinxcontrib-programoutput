@@ -25,6 +25,7 @@
 
 from __future__ import print_function, division, absolute_import
 
+import functools
 import os
 import sys
 import unittest
@@ -35,7 +36,31 @@ from docutils.nodes import literal_block, system_message
 from sphinxcontrib.programoutput import Command
 
 from . import AppMixin
-from . import with_content
+
+
+def with_content(content, **kwargs):
+    """
+    Always use a bare 'python' in the *content* string.
+
+    It will be replaced with ``sys.executable``.
+    """
+    if 'python' in content:
+        # XXX: This probably breaks if there are spaces in sys.executable.
+        content = content.replace('python', sys.executable)
+
+    def factory(f):
+        @functools.wraps(f)
+        def w(self):
+            self.document_content = content
+            if kwargs:
+                if 'ignore_warnings' in kwargs:
+                    getattr(self, 'ignore_warnings')
+                    self.ignore_warnings = kwargs.pop("ignore_warnings")
+                getattr(self, 'confoverrides')
+                self.confoverrides = kwargs
+            f(self)
+        return w
+    return factory
 
 
 class TestDirective(AppMixin,
@@ -76,7 +101,7 @@ class TestDirective(AppMixin,
         """
 
         self.assert_output(self.doctree, 'spam with eggs')
-        self.assert_cache(self.app, 'python -c \'print("spam with eggs")\'',
+        self.assert_cache(self.app, sys.executable + ' -c \'print("spam with eggs")\'',
                           'spam with eggs')
 
 
@@ -86,7 +111,7 @@ class TestDirective(AppMixin,
     def test_standard_error(self):
         output = 'spam with eggs'
         self.assert_output(self.doctree, output)
-        cmd = 'python -c \'import sys; sys.stderr.write("spam with eggs")\''
+        cmd = sys.executable + ' -c \'import sys; sys.stderr.write("spam with eggs")\''
         self.assert_cache(self.app, cmd, output)
 
 
@@ -97,7 +122,7 @@ class TestDirective(AppMixin,
                      reason="Python 3 prints version to stdout, not stderr")
     def test_standard_error_disabled(self):
         self.assert_output(self.doctree, '')
-        self.assert_cache(self.app, 'python -V', '', hide_standard_error=True)
+        self.assert_cache(self.app, sys.executable + ' -V', '', hide_standard_error=True)
 
 
     @with_content("""\
@@ -105,7 +130,7 @@ class TestDirective(AppMixin,
     def test_working_directory_defaults_to_srcdir(self):
         output = os.path.realpath(self.srcdir)
         self.assert_output(self.doctree, output)
-        self.assert_cache(self.app, "python -c 'import os; print(os.getcwd())'", output,
+        self.assert_cache(self.app, sys.executable + " -c 'import os; print(os.getcwd())'", output,
                           working_directory=str(self.srcdir))
 
 
@@ -115,7 +140,7 @@ class TestDirective(AppMixin,
     def test_working_directory_relative_to_srcdir(self):
         output = os.path.realpath(self.srcdir)
         self.assert_output(self.doctree, output)
-        self.assert_cache(self.app, "python -c 'import os; print(os.getcwd())'", output,
+        self.assert_cache(self.app, sys.executable + " -c 'import os; print(os.getcwd())'", output,
                           working_directory=str(self.srcdir))
 
 
@@ -126,7 +151,7 @@ class TestDirective(AppMixin,
         contentdir = os.path.join(self.srcdir, 'content')
         output = os.path.realpath(contentdir)
         self.assert_output(self.doctree, output)
-        self.assert_cache(self.app, "python -c 'import os; print(os.getcwd())'", output,
+        self.assert_cache(self.app, sys.executable + " -c 'import os; print(os.getcwd())'", output,
                           working_directory=str(contentdir))
 
 
@@ -212,7 +237,7 @@ spam with eggs""")
        :ellipsis: 2""")
     def test_ellipsis_stop_only(self):
         self.assert_output(self.doctree, 'spam\nwith\n...')
-        self.assert_cache(self.app, 'python -c \'print("spam\\nwith\\neggs")\'',
+        self.assert_cache(self.app, sys.executable + ' -c \'print("spam\\nwith\\neggs")\'',
                           'spam\nwith\neggs')
 
 
@@ -221,7 +246,8 @@ spam with eggs""")
        :ellipsis: -2""")
     def test_ellipsis_negative_stop(self):
         self.assert_output(self.doctree, 'spam\n...')
-        self.assert_cache(self.app, """python -c 'print("spam\\nwith\\neggs")'""",
+        self.assert_cache(self.app,
+                          sys.executable + """ -c 'print("spam\\nwith\\neggs")'""",
                           'spam\nwith\neggs')
 
 
@@ -230,7 +256,8 @@ spam with eggs""")
        :ellipsis: 1, 2""")
     def test_ellipsis_start_and_stop(self):
         self.assert_output(self.doctree, 'spam\n...\neggs')
-        self.assert_cache(self.app, """python -c 'print("spam\\nwith\\neggs")'""",
+        self.assert_cache(self.app,
+                          sys.executable + """ -c 'print("spam\\nwith\\neggs")'""",
                           'spam\nwith\neggs')
 
 
@@ -239,7 +266,8 @@ spam with eggs""")
        :ellipsis: 1, -1""")
     def test_ellipsis_start_and_negative_stop(self):
         self.assert_output(self.doctree, 'spam\n...\neggs')
-        self.assert_cache(self.app, """python -c 'print("spam\\nwith\\neggs")'""",
+        self.assert_cache(self.app,
+                          sys.executable + """ -c 'print("spam\\nwith\\neggs")'""",
                           'spam\nwith\neggs')
 
 
@@ -251,7 +279,7 @@ spam with eggs""")
             self.app.build()
         self.assertIn('Unexpected return code 1 from command',
                       excinfo.exception.args[0])
-        self.assertIn("python -c 'import sys; sys.exit(1)'",
+        self.assertIn(sys.executable + " -c 'import sys; sys.exit(1)'",
                       excinfo.exception.args[0])
 
 
@@ -264,7 +292,7 @@ spam with eggs""")
             self.app.build()
         self.assertIn('Unexpected return code 1 from command',
                       excinfo.exception.args[0])
-        self.assertIn("python -c 'import sys; sys.exit(1)'",
+        self.assertIn(sys.executable + " -c 'import sys; sys.exit(1)'",
                       excinfo.exception.args[0])
 
     @with_content("""\
@@ -272,7 +300,8 @@ spam with eggs""")
        :returncode: 1""")
     def test_expected_non_zero_return_code(self):
         self.assert_output(self.doctree, 'foo')
-        self.assert_cache(self.app, 'python -c \'import sys; print("foo"); sys.exit(1)\'',
+        self.assert_cache(self.app,
+                          sys.executable + ' -c \'import sys; print("foo"); sys.exit(1)\'',
                           'foo', returncode=1)
 
     @with_content("""\
@@ -285,8 +314,8 @@ spam with eggs""")
         self.assert_output(doctree, """\
 > python -c 'import sys; sys.exit(1)'
 
-[1]>""")
-        self.assert_cache(app, "python -c 'import sys; sys.exit(1)'", '',
+[1]>""".replace("python", sys.executable))
+        self.assert_cache(app, sys.executable + " -c 'import sys; sys.exit(1)'", '',
                           returncode=1)
 
     @with_content(u".. program-output:: 'spam with eggs'", ignore_warnings=True)

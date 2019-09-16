@@ -1,20 +1,15 @@
 group: travis_latest
 language: python
+group: travis_latest
 git:
   depth: 1
 python:
   - 2.7
   - 3.5
   - 3.6
+  - 3.7
   - pypy
   - pypy3
-# As of Apr 2019, we can't use Python 3.7 at the top-level
-# without using 'dist: xenial' at the top level. But that
-# breaks PyPy and PyPy3 (they can't be installed)
-matrix:
-  include:
-    - python: "3.7"
-      dist: xenial
 
 env:
   global:
