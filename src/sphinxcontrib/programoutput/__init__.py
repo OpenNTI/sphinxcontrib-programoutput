@@ -44,7 +44,9 @@ from collections import defaultdict, namedtuple
 from docutils import nodes
 from docutils.parsers import rst
 from docutils.parsers.rst.directives import flag, unchanged, nonnegative_int
+from docutils.statemachine import StringList
 
+from sphinx.locale import __
 from sphinx.util import logging as sphinx_logging
 
 __version__ = '0.16.dev0'
@@ -53,6 +55,26 @@ logger = sphinx_logging.getLogger('contrib.programoutput')
 
 class program_output(nodes.Element):
     pass
+
+
+def container_wrapper(directive, literal_node, caption):
+    container_node = nodes.container('', literal_block=True,
+                                     classes=['literal-block-wrapper'])
+    parsed = nodes.Element()
+    directive.state.nested_parse(StringList([caption], source=''),
+                                 directive.content_offset, parsed)
+    if isinstance(parsed[0], nodes.system_message):
+        msg = __('Invalid caption: %s' % parsed[0].astext())
+        raise ValueError(msg)
+    if isinstance(parsed[0], nodes.Element):
+        caption_node = nodes.caption(parsed[0].rawsource, '',
+                                     *parsed[0].children)
+        caption_node.source = literal_node.source
+        caption_node.line = literal_node.line
+        container_node += caption_node
+        container_node += literal_node
+        return container_node
+    raise RuntimeError  # never reached
 
 
 def _slice(value):
@@ -69,7 +91,8 @@ class ProgramOutputDirective(rst.Directive):
 
     option_spec = dict(shell=flag, prompt=flag, nostderr=flag,
                        ellipsis=_slice, extraargs=unchanged,
-                       returncode=nonnegative_int, cwd=unchanged)
+                       returncode=nonnegative_int, cwd=unchanged,
+                       caption=unchanged)
 
     def run(self):
         env = self.state.document.settings.env
@@ -91,6 +114,9 @@ class ProgramOutputDirective(rst.Directive):
         node['returncode'] = self.options.get('returncode', 0)
         if 'ellipsis' in self.options:
             node['strip_lines'] = self.options['ellipsis']
+        if 'caption' in self.options:
+            caption = self.options['caption'] or self.arguments[0]
+            node = container_wrapper(self, node, caption)
         return [node]
 
 
