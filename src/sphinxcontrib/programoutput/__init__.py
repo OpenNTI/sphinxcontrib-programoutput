@@ -92,7 +92,7 @@ class ProgramOutputDirective(rst.Directive):
     option_spec = dict(shell=flag, prompt=flag, nostderr=flag,
                        ellipsis=_slice, extraargs=unchanged,
                        returncode=nonnegative_int, cwd=unchanged,
-                       caption=unchanged)
+                       caption=unchanged, name=unchanged)
 
     def run(self):
         env = self.state.document.settings.env
@@ -117,6 +117,8 @@ class ProgramOutputDirective(rst.Directive):
         if 'caption' in self.options:
             caption = self.options['caption'] or self.arguments[0]
             node = container_wrapper(self, node, caption)
+
+        self.add_name(node)
         return [node]
 
 
