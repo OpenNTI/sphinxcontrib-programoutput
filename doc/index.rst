@@ -213,6 +213,12 @@ Reference
    build warning is issued.  The expected return code defaults to 0, and can be
    changed with the ``returncode`` option.
 
+   A ``caption`` option can be given to show the given name, or by default the
+   given command, before the output block.
+   A ``name`` option with a target name can be provided to reference the
+   command block by using ``ref``.
+
+
 .. directive:: command-output
 
    Same as :dir:`program-output`, but with enabled ``prompt`` option.
