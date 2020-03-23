@@ -54,7 +54,7 @@ html_theme = 'default'
 """
 
 def _find_duplicate_default_nodes():
-    from sphinx import addnodes
+    from sphinx import addnodes # pylint:disable=import-outside-toplevel
 
     class App(object):
 

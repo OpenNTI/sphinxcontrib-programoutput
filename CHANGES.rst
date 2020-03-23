@@ -5,7 +5,11 @@
 0.16 (unreleased)
 =================
 
-- Added ``name`` and ``caption`` options.
+- Add ``name`` and ``caption`` options. Added in
+  `PR 41 <https://github.com/NextThought/sphinxcontrib-programoutput/pull/41>`_ 
+  by Raphaël.
+- Add support for Python 3.8.
+
 
 0.15 (2019-09-16)
 =================
