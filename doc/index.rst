@@ -218,6 +218,8 @@ Reference
    A ``name`` option with a target name can be provided to reference the
    command block by using ``ref``.
 
+   .. versionchanged:: 0.16
+      Add the ``caption`` and ``name`` options.
 
 .. directive:: command-output
 
