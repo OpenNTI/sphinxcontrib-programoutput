@@ -2,7 +2,7 @@
  Changes
 =========
 
-0.16 (unreleased)
+0.16 (2020-03-23)
 =================
 
 - Add ``name`` and ``caption`` options. Added in
