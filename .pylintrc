@@ -27,11 +27,14 @@
 #   see https://github.com/PyCQA/pylint/issues/846
 # useless-suppression: the only way to avoid repeating it for specific statements everywhere that we
 #   do Py2/Py3 stuff is to put it here. Sadly this means that we might get better but not realize it.
+# bad-option-value: Pylint on Python 3 understands and checks for somethings Pylint on Python 2
+#   does not.
 disable=missing-docstring,
     invalid-name,
     wrong-import-order,
     locally-disabled,
     no-self-use,
+    bad-option-value,
 
 
 [FORMAT]

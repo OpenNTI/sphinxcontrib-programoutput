@@ -5,7 +5,7 @@
 0.16 (unreleased)
 =================
 
-- Nothing changed yet.
+- Add support for Python 3.8.
 
 
 0.15 (2019-09-16)
