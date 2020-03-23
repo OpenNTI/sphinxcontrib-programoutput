@@ -430,6 +430,7 @@ U+2264 \u2264 LESS-THAN OR EQUAL TO\n\u2264 line2\n..."""
         self.assert_output(self.doctree, 'spam', caption='mycaption', name='myname')
         self.assert_cache(self.app, 'echo spam', 'spam')
 
+
 def test_suite():
     return unittest.defaultTestLoader.loadTestsFromName(__name__)
 

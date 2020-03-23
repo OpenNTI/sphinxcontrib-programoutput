@@ -62,7 +62,9 @@ def _container_wrapper(directive, literal_node, caption):
     parsed = nodes.Element()
     directive.state.nested_parse(StringList([caption], source=''),
                                  directive.content_offset, parsed)
-    if isinstance(parsed[0], nodes.system_message):
+    if isinstance(parsed[0], nodes.system_message): # pragma: no cover
+        # TODO: Figure out if this is really possible and how to produce
+        # it in a test case.
         msg = 'Invalid caption: %s' % parsed[0].astext()
         raise ValueError(msg)
     assert isinstance(parsed[0], nodes.Element)
