@@ -31,7 +31,7 @@ import sys
 import unittest
 
 from sphinx.errors import SphinxWarning
-from docutils.nodes import literal_block, system_message
+from docutils.nodes import caption, container, literal_block, system_message
 
 from sphinxcontrib.programoutput import Command
 
@@ -66,11 +66,24 @@ def with_content(content, **kwargs):
 class TestDirective(AppMixin,
                     unittest.TestCase):
 
-    def assert_output(self, doctree, output):
+    def assert_output(self, doctree, output, **kwargs):
         __tracebackhide__ = True
         literal = doctree.next_node(literal_block)
         self.assertTrue(literal)
         self.assertEqual(literal.astext(), output)
+
+        if 'caption' in kwargs:
+            caption_node = doctree.next_node(caption)
+            self.assertTrue(caption_node)
+            self.assertEqual(caption_node.astext(), kwargs.get('caption'))
+
+        if 'name' in kwargs:
+            if 'caption' in kwargs:
+                container_node = doctree.next_node(container)
+                self.assertTrue(container_node)
+                self.assertIn(kwargs.get('name'), container_node.get('ids'))
+            else:
+                self.assertIn(kwargs.get('name'), literal.get('ids'))
 
     def assert_cache(self, app, cmd, output, use_shell=False,
                      hide_standard_error=False, returncode=0,
@@ -387,6 +400,35 @@ U+2264 \u2264 LESS-THAN OR EQUAL TO\n\u2264 line2\n..."""
             u'echo -e "U+2264 ≤ LESS-THAN OR EQUAL TO\\n≤ line2\\n≤ line3"',
             u'U+2264 \u2264 LESS-THAN OR EQUAL TO\n\u2264 line2\n\u2264 line3'
         )
+
+    @with_content("""\
+    .. program-output:: echo spam
+       :caption:""")
+    def test_caption_default(self):
+        self.assert_output(self.doctree, 'spam', caption='echo spam')
+        self.assert_cache(self.app, 'echo spam', 'spam')
+
+    @with_content("""\
+    .. program-output:: echo spam
+       :caption: mycaption""")
+    def test_caption(self):
+        self.assert_output(self.doctree, 'spam', caption='mycaption')
+        self.assert_cache(self.app, 'echo spam', 'spam')
+
+    @with_content("""\
+    .. program-output:: echo spam
+       :name: myname""")
+    def test_name(self):
+        self.assert_output(self.doctree, 'spam', name='myname')
+        self.assert_cache(self.app, 'echo spam', 'spam')
+
+    @with_content("""\
+    .. program-output:: echo spam
+       :caption: mycaption
+       :name: myname""")
+    def test_name_with_caption(self):
+        self.assert_output(self.doctree, 'spam', caption='mycaption', name='myname')
+        self.assert_cache(self.app, 'echo spam', 'spam')
 
 
 def test_suite():
