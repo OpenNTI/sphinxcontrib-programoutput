@@ -51,6 +51,16 @@ choose an alternate working directory with the ``cwd`` option.  The argument of
 this option is either a path relative to the current source file, or a absolute
 path which means that it is relative to the top level source directory.
 
+Usage with MyST (Markdown)
+==========================
+
+If you are using MyST_, the directive would look like::
+
+    ```{program-output} python -V
+    ---
+    ellipsis: 2
+    ---
+    ```
 
 Shortening the output
 ---------------------
@@ -309,3 +319,4 @@ License
 .. _format string: https://docs.python.org/2/library/string.html#formatstrings
 .. _issue tracker: https://github.com/NextThought/sphinxcontrib-programoutput/issues
 .. _pep8: https://pypi.python.org/pypi/pep8/
+.. _MyST: https://myst-parser.readthedocs.io/en/latest/using/syntax.html#extended-block-tokens
