@@ -16,19 +16,29 @@ on:
 
 jobs:
   build:
-    name: ${{ matrix.tox_env }}
-    runs-on: ubuntu-latest
+    name: ${{ matrix.name }}
+    runs-on: ubuntu-20.04
     strategy:
       fail-fast: false
       matrix:
         include:
-          - tox_env: doc
-          - tox_env: py36
-          - tox_env: py37
-          - tox_env: py38
+          - name: doc
+            tox_env: doc
+          - name: py36
+            tox_env: py36
+          - name: py37
+            tox_env: py37
+          - name: py38
+            tox_env: py38
+          - name: py38-macos
+            tox_env: py38
+            os: macOS-latest
+            python-version: 3.8
 
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0  # needed by setuptools-scm
       - name: Find python version
         id: py_ver
         shell: python
