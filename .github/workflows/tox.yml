@@ -22,6 +22,8 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - name: lint
+            tox_env: lint
           - name: doc
             tox_env: doc
           - name: py36
