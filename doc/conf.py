@@ -33,7 +33,7 @@ extensions = [
     'sphinx.ext.viewcode',
     'sphinx.ext.extlinks',
     'sphinx.ext.intersphinx',
-    'sphinxcontrib.programoutput'
+    'sphinxcontrib.programoutput',
 ]
 
 source_suffix = '.rst'
@@ -51,16 +51,20 @@ html_static_path = []
 
 intersphinx_mapping = {
     'python': ('https://docs.python.org', None),
-    'ansi': ('http://packages.python.org/sphinxcontrib-ansi', None)
+    'ansi': ('http://packages.python.org/sphinxcontrib-ansi', None),
 }
 
 extlinks = {
-    'issue': ('https://github.com/NextThought/sphinxcontrib-programoutput/issues/%s',
-              'issue #'),
-    'pr': ('https://github.com/NextThought/sphinxcontrib-programoutput/pull/%s',
-           'pull request #')
+    'issue': (
+        'https://github.com/NextThought/sphinxcontrib-programoutput/issues/%s',
+        'issue #',
+    ),
+    'pr': (
+        'https://github.com/NextThought/sphinxcontrib-programoutput/pull/%s',
+        'pull request #',
+    ),
 }
 
+
 def setup(app):
-    app.add_object_type('confval', 'confval',
-                        'pair: %s; configuration value')
+    app.add_object_type('confval', 'confval', 'pair: %s; configuration value')

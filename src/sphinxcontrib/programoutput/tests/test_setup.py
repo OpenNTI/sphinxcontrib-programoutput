@@ -30,17 +30,17 @@ from . import AppMixin
 
 from sphinxcontrib.programoutput import ProgramOutputCache
 
-class TestSetup(AppMixin,
-                unittest.TestCase):
 
-
+class TestSetup(AppMixin, unittest.TestCase):
     def test_init_cache(self):
         app = self.app
         self.assertIsInstance(app.env.programoutput_cache, ProgramOutputCache)
         self.assertFalse(app.env.programoutput_cache)
 
+
 def test_suite():
     return unittest.defaultTestLoader.loadTestsFromName(__name__)
+
 
 if __name__ == '__main__':
     unittest.main(defaultTest='test_suite')

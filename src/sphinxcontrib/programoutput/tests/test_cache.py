@@ -35,9 +35,7 @@ from sphinxcontrib.programoutput import ProgramOutputCache, Command
 from . import AppMixin
 
 
-class TestCache(AppMixin,
-                unittest.TestCase):
-
+class TestCache(AppMixin, unittest.TestCase):
     def assert_cache(self, cache, cmd, output, returncode=0):
         result = (returncode, output)
         self.assertFalse(cache)
@@ -48,11 +46,9 @@ class TestCache(AppMixin,
         cache = ProgramOutputCache()
         self.assert_cache(cache, Command([u'echo', u'blök']), u'blök')
 
-
     def test_shell(self):
         cache = ProgramOutputCache()
         self.assert_cache(cache, Command(u'echo blök', shell=True), u'blök')
-
 
     def test_working_directory(self):
         cache = ProgramOutputCache()
@@ -62,7 +58,6 @@ class TestCache(AppMixin,
         cmd = [sys.executable, '-c', 'import sys, os; sys.stdout.write(os.getcwd())']
         self.assert_cache(cache, Command(cmd, working_directory=cwd), cwd)
 
-
     def test_working_directory_shell(self):
         cache = ProgramOutputCache()
         cwd = os.path.join(self.tmpdir, 'wd')
@@ -71,18 +66,15 @@ class TestCache(AppMixin,
         cmd = Command('echo $PWD', working_directory=cwd, shell=True)
         self.assert_cache(cache, cmd, cwd)
 
-
     def test_hidden_standard_error(self):
         cache = ProgramOutputCache()
         cmd = [sys.executable, '-c', 'import sys; sys.stderr.write("spam")']
         self.assert_cache(cache, Command(cmd, hide_standard_error=True), '')
 
-
     def test_nonzero_return_code(self):
         cache = ProgramOutputCache()
         cmd = [sys.executable, '-c', 'import sys; sys.exit(1)']
         self.assert_cache(cache, Command(cmd), '', returncode=1)
-
 
     def test_nonzero_return_code_shell(self):
         cache = ProgramOutputCache()
@@ -101,8 +93,10 @@ class TestCache(AppMixin,
             pickled_env = pickle.load(f)
         assert pickled_env.programoutput_cache == {cmd: result}
 
+
 def test_suite():
     return unittest.defaultTestLoader.loadTestsFromName(__name__)
+
 
 if __name__ == '__main__':
     unittest.main(defaultTest='test_suite')

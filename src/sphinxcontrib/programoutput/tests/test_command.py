@@ -33,24 +33,21 @@ import os.path
 
 from sphinxcontrib.programoutput import Command, program_output
 
-class TestCommand(unittest.TestCase):
 
+class TestCommand(unittest.TestCase):
     def test_new_with_string_command(self):
         cmd = 'echo "spam with eggs"'
         self.assertEqual(Command(cmd).command, cmd)
         self.assertEqual(Command(cmd, shell=True).command, cmd)
 
-
     def test_new_with_list(self):
         cmd = Command(['echo', 'spam'])
         self.assertEqual(cmd.command, ('echo', 'spam'))
-
 
     def test_new_with_list_hashable(self):
         # Test that Command objects are hashable even when passed a non-hashable
         # list.  Important for caching!
         hash(Command(['echo', 'spam']))
-
 
     def test_from_programoutput_node(self):
         node = program_output()
@@ -69,7 +66,6 @@ class TestCommand(unittest.TestCase):
         node['hide_standard_error'] = True
         self.assertTrue(Command.from_program_output_node(node).hide_standard_error)
 
-
     def test_from_programoutput_node_extraargs(self):
         node = program_output()
         node['command'] = 'echo spam'
@@ -80,14 +76,12 @@ class TestCommand(unittest.TestCase):
         command = Command.from_program_output_node(node)
         self.assertEqual(command.command, 'echo spam with eggs')
 
-
     def test_execute(self, **kwargs):
         process = Command('echo spam', **kwargs).execute()
         self.assertIsNone(process.stderr)
         self.assertFalse(process.stdout.closed)
         self.assertEqual(process.wait(), 0)
         process.stdout.close()
-
 
     def test_execute_with_shell(self):
         self.test_execute(shell=True)
@@ -100,40 +94,41 @@ class TestCommand(unittest.TestCase):
         process.stdout.close()
         process.stderr.close()
 
-
     def test_get_output(self):
         returncode, output = Command('echo spam').get_output()
         self.assertEqual(returncode, 0)
         self.assertEqual(output, 'spam')
 
-
     def test_get_output_non_zero(self):
         returncode, output = Command(
-            sys.executable + ' -c "import sys; print(\'spam\'); sys.exit(1)"').get_output()
+            sys.executable + ' -c "import sys; print(\'spam\'); sys.exit(1)"'
+        ).get_output()
         self.assertEqual(returncode, 1)
         self.assertEqual(output, 'spam')
-
 
     def test_get_output_with_hidden_standard_error(self):
         returncode, output = Command(
             sys.executable + ' -c "import sys; sys.stderr.write(\'spam\')"',
-            hide_standard_error=True).get_output()
+            hide_standard_error=True,
+        ).get_output()
         self.assertEqual(returncode, 0)
         self.assertEqual(output, '')
-
 
     def test_get_output_with_working_directory(self):
         tmpdir = tempfile.mkdtemp()
         cwd = os.path.realpath(str(tmpdir))
         returncode, output = Command(
             sys.executable + ' -c "import sys, os; sys.stdout.write(os.getcwd())"',
-            working_directory=cwd).get_output()
+            working_directory=cwd,
+        ).get_output()
         self.assertEqual(returncode, 0)
         self.assertEqual(output, cwd)
         shutil.rmtree(tmpdir)
 
+
 def test_suite():
     return unittest.defaultTestLoader.loadTestsFromName(__name__)
+
 
 if __name__ == '__main__':
     unittest.main(defaultTest='test_suite')

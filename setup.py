@@ -27,6 +27,7 @@ import os
 import re
 from setuptools import setup, find_packages
 
+
 def read_desc():
     with open('README.rst') as stream:
         readme = stream.read()
@@ -35,9 +36,12 @@ def read_desc():
 
     return readme + '\n\n' + changes
 
+
 def read_version_number():
     VERSION_PATTERN = re.compile(r"__version__ = '([^']+)'")
-    with open(os.path.join('src', 'sphinxcontrib', 'programoutput', '__init__.py')) as stream:
+    with open(
+        os.path.join('src', 'sphinxcontrib', 'programoutput', '__init__.py')
+    ) as stream:
         for line in stream:
             match = VERSION_PATTERN.search(line)
             if match:
@@ -45,8 +49,8 @@ def read_version_number():
 
         raise ValueError('Could not extract version number')
 
-tests_require = [
-]
+
+tests_require = []
 
 setup(
     name='sphinxcontrib-programoutput',

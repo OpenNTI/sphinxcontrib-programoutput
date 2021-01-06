@@ -52,24 +52,26 @@ __version__ = '0.17.dev0'
 
 logger = sphinx_logging.getLogger('contrib.programoutput')
 
+
 class program_output(nodes.Element):
     pass
 
 
 def _container_wrapper(directive, literal_node, caption):
-    container_node = nodes.container('', literal_block=True,
-                                     classes=['literal-block-wrapper'])
+    container_node = nodes.container(
+        '', literal_block=True, classes=['literal-block-wrapper']
+    )
     parsed = nodes.Element()
-    directive.state.nested_parse(StringList([caption], source=''),
-                                 directive.content_offset, parsed)
-    if isinstance(parsed[0], nodes.system_message): # pragma: no cover
+    directive.state.nested_parse(
+        StringList([caption], source=''), directive.content_offset, parsed
+    )
+    if isinstance(parsed[0], nodes.system_message):  # pragma: no cover
         # TODO: Figure out if this is really possible and how to produce
         # it in a test case.
         msg = 'Invalid caption: %s' % parsed[0].astext()
         raise ValueError(msg)
     assert isinstance(parsed[0], nodes.Element)
-    caption_node = nodes.caption(parsed[0].rawsource, '',
-                                 *parsed[0].children)
+    caption_node = nodes.caption(parsed[0].rawsource, '', *parsed[0].children)
     caption_node.source = literal_node.source
     caption_node.line = literal_node.line
     container_node += caption_node
@@ -89,10 +91,17 @@ class ProgramOutputDirective(rst.Directive):
     final_argument_whitespace = True
     required_arguments = 1
 
-    option_spec = dict(shell=flag, prompt=flag, nostderr=flag,
-                       ellipsis=_slice, extraargs=unchanged,
-                       returncode=nonnegative_int, cwd=unchanged,
-                       caption=unchanged, name=unchanged)
+    option_spec = dict(
+        shell=flag,
+        prompt=flag,
+        nostderr=flag,
+        ellipsis=_slice,
+        extraargs=unchanged,
+        returncode=nonnegative_int,
+        cwd=unchanged,
+        caption=unchanged,
+        name=unchanged,
+    )
 
     def run(self):
         env = self.state.document.settings.env
@@ -122,8 +131,7 @@ class ProgramOutputDirective(rst.Directive):
         return [node]
 
 
-_Command = namedtuple(
-    'Command', 'command shell hide_standard_error working_directory')
+_Command = namedtuple('Command', 'command shell hide_standard_error working_directory')
 
 
 class Command(_Command):
@@ -131,18 +139,19 @@ class Command(_Command):
     A command to be executed.
     """
 
-    def __new__(cls, command, shell=False, hide_standard_error=False,
-                working_directory='/'):
+    def __new__(
+        cls, command, shell=False, hide_standard_error=False, working_directory='/'
+    ):
         if isinstance(command, list):
             command = tuple(command)
         # `chdir()` resolves symlinks, so we need to resolve them too for
         # caching to make sure that different symlinks to the same directory
         # don't result in different cache keys.  Also normalize paths to make
         # sure that identical paths are also equal as strings.
-        working_directory = os.path.normpath(os.path.realpath(
-            working_directory))
-        return _Command.__new__(cls, command, shell, hide_standard_error,
-                                working_directory)
+        working_directory = os.path.normpath(os.path.realpath(working_directory))
+        return _Command.__new__(
+            cls, command, shell, hide_standard_error, working_directory
+        )
 
     @classmethod
     def from_program_output_node(cls, node):
@@ -151,8 +160,12 @@ class Command(_Command):
         """
         extraargs = node.get('extraargs', '')
         command = (node['command'] + ' ' + extraargs).strip()
-        return cls(command, node['use_shell'],
-                   node['hide_standard_error'], node['working_directory'])
+        return cls(
+            command,
+            node['use_shell'],
+            node['hide_standard_error'],
+            node['working_directory'],
+        )
 
     def execute(self):
         """
@@ -162,9 +175,7 @@ class Command(_Command):
         command.
         """
         command = self.command
-        if (bytes is str
-                and not isinstance(command, str)
-                and hasattr(command, 'encode')):
+        if bytes is str and not isinstance(command, str) and hasattr(command, 'encode'):
             # Python 2, given a unicode string
             command = command.encode(sys.getfilesystemencoding())
             assert isinstance(command, str)
@@ -175,9 +186,13 @@ class Command(_Command):
             else:
                 command = self.command
 
-        return Popen(command, shell=self.shell, stdout=PIPE,
-                     stderr=PIPE if self.hide_standard_error else STDOUT,
-                     cwd=self.working_directory)
+        return Popen(
+            command,
+            shell=self.shell,
+            stdout=PIPE,
+            stderr=PIPE if self.hide_standard_error else STDOUT,
+            cwd=self.working_directory,
+        )
 
     def get_output(self):
         """
@@ -188,8 +203,11 @@ class Command(_Command):
         unicode string, with final trailing spaces and new lines stripped.
         """
         process = self.execute()
-        output = process.communicate()[0].decode(
-            sys.getfilesystemencoding(), 'replace').rstrip()
+        output = (
+            process.communicate()[0]
+            .decode(sys.getfilesystemencoding(), 'replace')
+            .rstrip()
+        )
         return process.returncode, output
 
     def __str__(self):
@@ -229,7 +247,7 @@ def _prompt_template_as_unicode(app):
         for enc in 'utf-8', sys.getfilesystemencoding():
             try:
                 tmpl = tmpl.decode(enc)
-            except UnicodeError: # pragma: no cover
+            except UnicodeError:  # pragma: no cover
                 pass
             else:
                 app.config.programoutput_prompt_template = tmpl
@@ -270,8 +288,7 @@ def run_programs(app, doctree):
         else:
             if returncode != node['returncode']:
                 logger.warning(
-                    'Unexpected return code %s from command %s',
-                    returncode, command
+                    'Unexpected return code %s from command %s', returncode, command
                 )
 
             # replace lines with ..., if ellipsis is specified
@@ -294,15 +311,12 @@ def run_programs(app, doctree):
                 # to the default encoding (which may have often worked before).
                 prompt_template = _prompt_template_as_unicode(app)
                 output = prompt_template.format(
-                    command=node['command'],
-                    output=output,
-                    returncode=returncode
+                    command=node['command'], output=output, returncode=returncode
                 )
 
             new_node = node_class(output, output)
             new_node['language'] = 'text'
             node.replace_self(new_node)
-
 
 
 def init_cache(app):
@@ -318,13 +332,12 @@ def init_cache(app):
 
 
 def setup(app):
-    app.add_config_value('programoutput_prompt_template',
-                         '$ {command}\n{output}', 'env')
+    app.add_config_value(
+        'programoutput_prompt_template', '$ {command}\n{output}', 'env'
+    )
     app.add_directive('program-output', ProgramOutputDirective)
     app.add_directive('command-output', ProgramOutputDirective)
     app.connect('builder-inited', init_cache)
     app.connect('doctree-read', run_programs)
-    metadata = {
-        'parallel_read_safe': True
-    }
+    metadata = {'parallel_read_safe': True}
     return metadata

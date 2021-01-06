@@ -14,8 +14,8 @@ from functools import update_wrapper
 # useless-object-inheritance is version specific
 # pylint:disable=bad-option-value,useless-object-inheritance
 
-class Lazy(object):
 
+class Lazy(object):
     def __init__(self, func, name=None):
         if name is None:
             name = func.__name__
@@ -26,12 +26,12 @@ class Lazy(object):
         if inst is None:
             return self
 
-
         func, name = self.data
         value = func(inst)
         inst.__dict__[name] = value
         inst.addCleanup(delattr, inst, name)
         return value
+
 
 #: conf.py for tests
 CONF_PY = """\
@@ -53,17 +53,16 @@ pygments_style = 'sphinx'
 html_theme = 'default'
 """
 
+
 def _find_duplicate_default_nodes():
-    from sphinx import addnodes # pylint:disable=import-outside-toplevel
+    from sphinx import addnodes  # pylint:disable=import-outside-toplevel
 
     class App(object):
-
         def __init__(self):
             self.nodes = set()
 
         def add_node(self, node):
             self.nodes.add(node.__name__)
-
 
     app = App()
     try:
@@ -73,6 +72,7 @@ def _find_duplicate_default_nodes():
         pass
 
     return app.nodes
+
 
 class AppMixin(object):
 
@@ -98,7 +98,8 @@ class AppMixin(object):
         # Likewise for 'eq'
         self.roles = roles._roles.copy()
 
-        # Avoid "node class 'toctree' is already registered, its visitors will be overridden"
+        # Avoid error:
+        # node class 'toctree' is already registered, its visitors will be overridden
         # By default this class has *no* `visit_` methods
         for node in self.duplicate_nodes_to_remove:
             if hasattr(nodes.GenericNodeVisitor, 'visit_' + node):
@@ -127,10 +128,12 @@ class AppMixin(object):
             f.write(CONF_PY)
         index_document = os.path.join(srcdir, 'index.rst')
         with open(index_document, 'w') as f:
-            f.write("""\
+            f.write(
+                """\
     .. toctree::
 
-       content/doc""")
+       content/doc"""
+            )
         content_directory = os.path.join(srcdir, 'content')
         os.mkdir(content_directory)
         content_document = os.path.join(content_directory, 'doc.rst')
@@ -159,7 +162,6 @@ class AppMixin(object):
     def confoverrides(self):
         return {}
 
-
     @Lazy
     def app(self):
         """
@@ -171,15 +173,24 @@ class AppMixin(object):
         confoverrides = self.confoverrides
         warningiserror = not self.ignore_warnings
 
-        app = Sphinx(str(srcdir), str(srcdir), str(outdir), str(doctreedir), 'html',
-                     status=None, warning=None, freshenv=None,
-                     warningiserror=warningiserror, confoverrides=confoverrides)
+        app = Sphinx(
+            str(srcdir),
+            str(srcdir),
+            str(outdir),
+            str(doctreedir),
+            'html',
+            status=None,
+            warning=None,
+            freshenv=None,
+            warningiserror=warningiserror,
+            confoverrides=confoverrides,
+        )
         if self.build_app:
             app.build()
         return app
 
     @Lazy
-    def build_app(self): # pylint:disable=method-hidden
+    def build_app(self):  # pylint:disable=method-hidden
         return False
 
     @Lazy
@@ -193,4 +204,5 @@ class AppMixin(object):
         app = self.app
         return app.env.get_doctree('content/doc')
 
-assert isinstance(AppMixin.app, Lazy) # coverage
+
+assert isinstance(AppMixin.app, Lazy)  # coverage

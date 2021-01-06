@@ -8,6 +8,11 @@ repos:
   #   rev: 5.7.0
   #   hooks:
   #     - id: isort
+  - repo: https://github.com/python/black.git
+    rev: 20.8b1
+    hooks:
+      - id: black
+        language_version: python3
   - repo: https://github.com/pre-commit/pre-commit-hooks.git
     rev: v3.4.0
     hooks:
@@ -19,16 +24,13 @@ repos:
       - id: check-merge-conflict
       - id: debug-statements
         language_version: python3
-  # - repo: https://gitlab.com/pycqa/flake8.git
-  #   rev: 3.8.4
-  #   hooks:
-  #     - id: flake8
-  #       additional_dependencies:
-  #         - pydocstyle>=5.1.1
-  #         - flake8-absolute-import
-  #         - flake8-black>=0.1.1
-  #         - flake8-docstrings>=1.5.0
-  #       language_version: python3
+  - repo: https://gitlab.com/pycqa/flake8.git
+    rev: 3.8.4
+    hooks:
+      - id: flake8
+        additional_dependencies:
+          - flake8-black>=0.1.1
+        language_version: python3
   - repo: https://github.com/adrienverge/yamllint.git
     rev: v1.25.0
     hooks:

@@ -23,30 +23,31 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-from __future__ import (print_function, division, absolute_import)
+from __future__ import print_function, division, absolute_import
 
 import unittest
 
 from sphinxcontrib.programoutput import _slice
 
-class TestSlice(unittest.TestCase):
 
+class TestSlice(unittest.TestCase):
     def test_slice_simple(self):
         self.assertEqual(_slice('2'), (2, None))
         self.assertEqual(_slice('2,2'), (2, 2))
 
-
     def test_slice_empty(self):
         with self.assertRaises(ValueError) as exc:
             assert _slice('')
-        assert str(exc.exception.args[0]).startswith("invalid literal for int() with base 10:")
-
+        assert str(exc.exception.args[0]).startswith(
+            "invalid literal for int() with base 10:"
+        )
 
     def test_slice_no_int(self):
         with self.assertRaises(ValueError) as exc:
             _slice('foo,2')
-        assert str(exc.exception.args[0]).startswith("invalid literal for int() with base 10:")
-
+        assert str(exc.exception.args[0]).startswith(
+            "invalid literal for int() with base 10:"
+        )
 
     def test_slice_too_many(self):
         with self.assertRaises(ValueError) as exc:
@@ -56,6 +57,7 @@ class TestSlice(unittest.TestCase):
 
 def test_suite():
     return unittest.defaultTestLoader.loadTestsFromName(__name__)
+
 
 if __name__ == '__main__':
     unittest.main(defaultTest='test_suite')
