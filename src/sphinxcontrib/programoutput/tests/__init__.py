@@ -2,6 +2,8 @@ import os
 import os.path
 import shutil
 import tempfile
+import unittest  # noqa
+
 
 from docutils import nodes
 from docutils.parsers.rst import directives
@@ -13,6 +15,14 @@ from functools import update_wrapper
 # pylint:disable=no-self-use,protected-access,too-few-public-methods
 # useless-object-inheritance is version specific
 # pylint:disable=bad-option-value,useless-object-inheritance
+
+# Trick to avoid unresonable truncation on assertEqual
+# $ https://stackoverflow.com/a/61345284/99834
+# if 'unittest.util' in __import__('sys').modules:
+#     # Show full diff in self.assertEqual.
+#     __import__('sys').modules[
+#         'unittest.util'
+#     ]._MAX_LENGTH = 9999  # pylint: disable=protected-access
 
 
 class Lazy(object):

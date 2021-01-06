@@ -100,7 +100,7 @@ class TestDirective(AppMixin, unittest.TestCase):
         working_directory = working_directory or app.srcdir
         working_directory = os.path.normpath(os.path.realpath(working_directory))
         cache_key = Command(cmd, use_shell, hide_standard_error, working_directory)
-        self.assertEqual(cache, {cache_key: (returncode, output)})
+        self.assertEqual(cache[cache_key], (returncode, output))
 
     @with_content('.. program-output:: echo eggs')
     def test_simple(self):
@@ -481,20 +481,20 @@ U+2264 ≤ LESS-THAN OR EQUAL TO""",
 
     @with_content(
         """\
-    .. program-output:: echo -e "U+2264 ≤ LESS-THAN OR EQUAL TO\\n≤ line2\\n≤ line3"
+    .. program-output:: python -c "print('≤1\\n≤2\\n≤3')"
         :ellipsis: 2
     """
     )
     def test_unicode_output_with_ellipsis(self):
+
         self.assert_output(
             self.doctree,
-            u"""\
-U+2264 \u2264 LESS-THAN OR EQUAL TO\n\u2264 line2\n...""",
+            """≤1\n≤2\n...""",
         )
         self.assert_cache(
             self.app,
-            u'echo -e "U+2264 ≤ LESS-THAN OR EQUAL TO\\n≤ line2\\n≤ line3"',
-            u'U+2264 \u2264 LESS-THAN OR EQUAL TO\n\u2264 line2\n\u2264 line3',
+            '''python -c "print('≤1\\n≤2\\n≤3')"''',
+            """≤1\n≤2\n≤3""",
         )
 
     @with_content(
