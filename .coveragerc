@@ -1,5 +1,7 @@
 [run]
-source = src
+source = sphinxcontrib.programoutput
+# New in 5.0; required for the GHA coveralls submission.
+relative_files = True
 
 [report]
 exclude_lines =

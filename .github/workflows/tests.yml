@@ -1,0 +1,53 @@
+name: tests
+
+on: [push, pull_request]
+
+env:
+  PYTHONHASHSEED: 1042466059
+  ZOPE_INTERFACE_STRICT_IRO: 1
+  PYTHONWARNINGS: "ignore:'U' mode is deprecated:DeprecationWarning::"
+
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        python-version: [2.7, pypy2, pypy3, 3.6, 3.7, 3.8, 3.9]
+
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Pip cache
+      uses: actions/cache@v2
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('setup.*') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+    - name: Install dependencies
+      run: |
+        python -m pip install -U pip setuptools wheel
+        python -m pip install -U coverage pylint
+        python -m pip install -U -e ".[test]"
+    - name: Test
+      run: |
+        pylint -r no src/sphinxcontrib
+        coverage run -m unittest discover -s src
+    - name: Submit to Coveralls
+      # This is a container action, which only runs on Linux.
+      uses: AndreMiras/coveralls-python-action@develop
+      with:
+        parallel: true
+
+  coveralls_finish:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+    - name: Coveralls Finished
+      uses: AndreMiras/coveralls-python-action@develop
+      with:
+        parallel-finished: true
