@@ -9,6 +9,11 @@
 
 - Drop support for python 3.5.
 
+- Include program output and current working directory in the warning
+  logged when a program returns an unexpected return code. Suggested
+  by Sorin Sbarnea. See `issue 50
+  <https://github.com/NextThought/sphinxcontrib-programoutput/issues/50>`_.
+
 
 0.16 (2020-03-23)
 =================
