@@ -292,7 +292,8 @@ spam with eggs""")
             self.app.build()
         self.assertIn('Unexpected return code 1 from command',
                       excinfo.exception.args[0])
-        self.assertIn(sys.executable + " -c 'import sys; sys.exit(1)'",
+        parsed_command = (sys.executable, '-c', 'import sys; sys.exit(1)')
+        self.assertIn(repr(parsed_command),
                       excinfo.exception.args[0])
 
 

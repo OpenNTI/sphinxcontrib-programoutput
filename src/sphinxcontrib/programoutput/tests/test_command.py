@@ -37,7 +37,8 @@ class TestCommand(unittest.TestCase):
 
     def test_new_with_string_command(self):
         cmd = 'echo "spam with eggs"'
-        self.assertEqual(Command(cmd).command, cmd)
+        parsed_cmd = ('echo', 'spam with eggs')
+        self.assertEqual(Command(cmd).command, parsed_cmd)
         self.assertEqual(Command(cmd, shell=True).command, cmd)
 
 
@@ -59,7 +60,8 @@ class TestCommand(unittest.TestCase):
         node['hide_standard_error'] = False
         node['working_directory'] = '/spam/with/eggs'
         command = Command.from_program_output_node(node)
-        self.assertEqual(command.command, 'echo spam')
+        parsed_command = ('echo', 'spam')
+        self.assertEqual(command.command, parsed_command)
         self.assertEqual(command.working_directory, '/spam/with/eggs')
         self.assertFalse(command.shell)
         self.assertFalse(command.hide_standard_error)
@@ -78,7 +80,8 @@ class TestCommand(unittest.TestCase):
         node['extraargs'] = 'with eggs'
         node['working_directory'] = '/'
         command = Command.from_program_output_node(node)
-        self.assertEqual(command.command, 'echo spam with eggs')
+        parsed_command = ('echo', 'spam', 'with', 'eggs')
+        self.assertEqual(command.command, parsed_command)
 
 
     def test_execute(self, **kwargs):
