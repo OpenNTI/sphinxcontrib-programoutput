@@ -292,21 +292,28 @@ spam with eggs""")
             self.app.build()
         self.assertIn('Unexpected return code 1 from command',
                       excinfo.exception.args[0])
-        self.assertIn(sys.executable + " -c 'import sys; sys.exit(1)'",
+        parsed_command = (sys.executable, '-c', 'import sys; sys.exit(1)')
+        self.assertIn(repr(parsed_command),
                       excinfo.exception.args[0])
 
 
     @with_content("""\
-    .. program-output:: python -c 'import sys; sys.exit(1)'
+    .. program-output:: python -c 'import sys; sys.exit("some output")'
        :shell:""",
                   ignore_warnings=False)
     def test_shell_with_unexpected_return_code(self):
         with self.assertRaises(SphinxWarning) as excinfo:
             self.app.build()
+        msg = excinfo.exception.args[0]
         self.assertIn('Unexpected return code 1 from command',
-                      excinfo.exception.args[0])
-        self.assertIn(sys.executable + " -c 'import sys; sys.exit(1)'",
-                      excinfo.exception.args[0])
+                      msg)
+        self.assertIn("import sys; sys.exit",
+                      msg)
+        # Python 2 include the u'' prefix on the output string.
+        self.assertIn('(output=', msg)
+        self.assertIn('\'some output\')', msg)
+        self.assertIn('hide_standard_error=', msg)
+        self.assertIn('working_directory=', msg)
 
     @with_content("""\
     .. program-output:: python -c 'import sys; print("foo"); sys.exit(1)'

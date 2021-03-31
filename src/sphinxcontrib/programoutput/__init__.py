@@ -133,16 +133,37 @@ class Command(_Command):
 
     def __new__(cls, command, shell=False, hide_standard_error=False,
                 working_directory='/'):
-        if isinstance(command, list):
-            command = tuple(command)
         # `chdir()` resolves symlinks, so we need to resolve them too for
         # caching to make sure that different symlinks to the same directory
         # don't result in different cache keys.  Also normalize paths to make
         # sure that identical paths are also equal as strings.
         working_directory = os.path.normpath(os.path.realpath(
             working_directory))
+        # Likewise, normalize the command now for better caching, and so
+        # that we can present *exactly* what we run to the user.
+        command = cls.__normalize_command(command, shell)
         return _Command.__new__(cls, command, shell, hide_standard_error,
                                 working_directory)
+
+    @staticmethod
+    def __normalize_command(command, shell):
+        # Returns either a native string, to a tuple.
+        if (bytes is str
+                and not isinstance(command, str)
+                and hasattr(command, 'encode')):
+            # Python 2, given a unicode string
+            command = command.encode(sys.getfilesystemencoding())
+            assert isinstance(command, str)
+
+        if not shell and isinstance(command, str):
+            command = shlex.split(command)
+
+        if isinstance(command, list):
+            command = tuple(command)
+
+        assert isinstance(command, (str, tuple)), command
+
+        return command
 
     @classmethod
     def from_program_output_node(cls, node):
@@ -162,18 +183,7 @@ class Command(_Command):
         command.
         """
         command = self.command
-        if (bytes is str
-                and not isinstance(command, str)
-                and hasattr(command, 'encode')):
-            # Python 2, given a unicode string
-            command = command.encode(sys.getfilesystemencoding())
-            assert isinstance(command, str)
 
-        if not self.shell:
-            if isinstance(command, str):
-                command = shlex.split(command)
-            else:
-                command = self.command
 
         return Popen(command, shell=self.shell, stdout=PIPE,
                      stderr=PIPE if self.hide_standard_error else STDOUT,
@@ -270,8 +280,8 @@ def run_programs(app, doctree):
         else:
             if returncode != node['returncode']:
                 logger.warning(
-                    'Unexpected return code %s from command %s',
-                    returncode, command
+                    'Unexpected return code %s from command %r (output=%r)',
+                    returncode, command, output
                 )
 
             # replace lines with ..., if ellipsis is specified
