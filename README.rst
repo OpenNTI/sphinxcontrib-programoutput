@@ -2,8 +2,8 @@
  sphinxcontrib-programoutput
 =============================
 
-.. image:: https://secure.travis-ci.org/NextThought/sphinxcontrib-programoutput.png
-   :target: http://travis-ci.org/NextThought/sphinxcontrib-programoutput
+.. image:: https://github.com/NextThought/sphinxcontrib-programoutput/workflows/tests/badge.svg
+   :target: https://github.com/NextThought/sphinxcontrib-programoutput/actions?query=workflow%3Atests
 
 .. image:: https://coveralls.io/repos/github/NextThought/sphinxcontrib-programoutput/badge.svg
    :target: https://coveralls.io/github/NextThought/sphinxcontrib-programoutput
