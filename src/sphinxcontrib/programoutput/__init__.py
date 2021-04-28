@@ -184,7 +184,9 @@ class Command(_Command):
         """
         command = self.command
 
-
+        # Popen is a context manager only in Python 3, and we'd have to restructure
+        # the code to work with it anyway.
+        # pylint:disable=consider-using-with
         return Popen(command, shell=self.shell, stdout=PIPE,
                      stderr=PIPE if self.hide_standard_error else STDOUT,
                      cwd=self.working_directory)
