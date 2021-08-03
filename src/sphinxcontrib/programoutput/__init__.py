@@ -146,7 +146,7 @@ class Command(_Command):
                                 working_directory)
 
     @staticmethod
-    def __normalize_command(command, shell):
+    def __normalize_command(command, shell): # pylint:disable=unused-private-member
         # Returns either a native string, to a tuple.
         if (bytes is str
                 and not isinstance(command, str)
