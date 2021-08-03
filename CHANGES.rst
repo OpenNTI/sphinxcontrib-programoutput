@@ -17,15 +17,14 @@
 
 - Include program output and current working directory in the warning
   logged when a program returns an unexpected return code. Suggested
-  by Sorin Sbarnea. See `issue 50
-  <https://github.com/NextThought/sphinxcontrib-programoutput/issues/50>`_.
+  by Sorin Sbarnea. See :issue:`50`.
+
 
 
 0.16 (2020-03-23)
 =================
 
-- Add ``name`` and ``caption`` options. Added in
-  `PR 41 <https://github.com/NextThought/sphinxcontrib-programoutput/pull/41>`_
+- Add ``name`` and ``caption`` options. Added in :pr:`41`.
   by Raphaël.
 - Add support for Python 3.8.
 
@@ -36,8 +35,7 @@
 - Make the test suite stop assuming the presence of a 'python'
   executable on the path. Instead it uses ``sys.executable`` (which
   shouldn't have spaces). Note that it does continue to assume the
-  presence of other executables, such as 'echo'. Reported in `issue 38
-  <https://github.com/NextThought/sphinxcontrib-programoutput/issues/38>`_
+  presence of other executables, such as 'echo'. Reported in :issue:`38`
   by John Vandenberg.
 
 
@@ -52,8 +50,7 @@
 - Avoid unicode errors when the program command or output produced
   non-ASCII output and the configured prompt was a byte string. This
   was most likely under Python 2, where the default configured prompt
-  is a byte string. Reported by, and patch inspired by, `issue 33
-  <https://github.com/NextThought/sphinxcontrib-programoutput/issues/33>`_
+  is a byte string. Reported by, and patch inspired by, :issue:`33`
   by latricewilgus.
 
 0.13 (2018-12-22)
@@ -66,8 +63,7 @@
 - Restore error message into the document by default from failed
   program runs on Sphinx >= 1.8.0b1.
 
-- Fix deprecation warnings on Sphinx >= 1.8. Reported in `issue 29
-  <https://github.com/NextThought/sphinxcontrib-programoutput/issues/29>`_
+- Fix deprecation warnings on Sphinx >= 1.8. Reported in :issue:`29`
   by miili.
 
 
@@ -75,8 +71,7 @@
 =================
 
 - Explicitly set ``parallel_read_safe`` to true in the extension
-  metadata. See `issue 25
-  <https://github.com/NextThought/sphinxcontrib-programoutput/issues/25>`_.
+  metadata. See :issue:`25`
   With thanks to Adam J. Stewart and Stephen McDowell.
 
 0.10 (2017-03-17)
@@ -97,9 +92,7 @@
 - Run the tests on Travis CI. Formatting and style is enforced by pylint.
 
 - The oldest supported and tested Sphinx version is now 1.3.5. See
-  `issue 17
-  <https://github.com/NextThought/sphinxcontrib-programoutput/issues/17>`_.
-
+  :issue:`17`.
 
 - Remove support for Python 2.6, Python 3.2 and 3.3.
 

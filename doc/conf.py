@@ -56,9 +56,9 @@ intersphinx_mapping = {
 
 extlinks = {
     'issue': ('https://github.com/NextThought/sphinxcontrib-programoutput/issues/%s',
-              'issue #'),
+              'issue #%s'),
     'pr': ('https://github.com/NextThought/sphinxcontrib-programoutput/pull/%s',
-           'pull request #')
+           'pull request #%s')
 }
 
 def setup(app):
