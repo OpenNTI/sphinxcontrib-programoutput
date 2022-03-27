@@ -95,7 +95,7 @@ The above omits all lines except the first two and the last two lines:
    :ellipsis: 2,-2
 
 
-Mimicing shell input
+Mimicking shell input
 --------------------
 
 You can mimic shell input with the :dir:`command-output` directive [#alias]_.
@@ -120,7 +120,7 @@ The appearance of this output can be configured with
 Command execution and shell expansion
 -------------------------------------
 
-Normally the command is splitted according to the POSIX shell syntax (see
+Normally the command is split according to the POSIX shell syntax (see
 :py:mod:`shlex`), and executed directly.  Thus special shell features like
 expansion of environment variables will not work::
 
@@ -145,7 +145,7 @@ Other shell features like process expansion consequently work, too::
 .. command-output:: ls -l $(which grep)
    :shell:
 
-Remember to use ``shell`` carefully to avoid unintented interpretation of shell
+Remember to use ``shell`` carefully to avoid unintended interpretation of shell
 syntax and swallowing of fatal errors!
 
 
