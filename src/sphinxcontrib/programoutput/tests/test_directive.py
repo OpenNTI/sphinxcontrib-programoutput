@@ -440,6 +440,17 @@ U+2264 \u2264 LESS-THAN OR EQUAL TO\n\u2264 line2\n..."""
         self.assert_cache(self.app, 'echo spam', 'spam')
 
 
+    @with_content("""\
+    .. program-output:: python -c 'import json; d = {"foo": "bar"}; print(json.dumps(d))'
+       :language: json""",
+                  ignore_warnings=False)
+    def test_language_json(self):
+        literal = self.doctree.next_node(literal_block)
+        self.assertTrue(literal)
+        self.assertEqual(literal.astext(), '{"foo": "bar"}')
+        self.assertEqual(literal["language"], "json")
+
+
 def test_suite():
     return unittest.defaultTestLoader.loadTestsFromName(__name__)
 
