@@ -31,10 +31,11 @@ from setuptools import find_namespace_packages
 def read_desc():
     with open('README.rst', encoding='utf-8') as stream:
         readme = stream.read()
-    with open('CHANGES.rst', encoding='utf-8') as stream:
-        changes = stream.read()
+    # CHANGES.rst includes sphinx-specific markup, so
+    # it can't be in the long description without some processing
+    # that we're not doing -- its invalid ReST
 
-    return readme + '\n\n' + changes
+    return readme
 
 def read_version_number():
     VERSION_PATTERN = re.compile(r"__version__ = '([^']+)'")
