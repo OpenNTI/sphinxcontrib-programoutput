@@ -5,7 +5,12 @@
 0.18 (unreleased)
 =================
 
-- Nothing changed yet.
+- Drop support for Python < 3.8. This means Python 2 is no longer
+  supported.
+- Drop setuptools dependency. Instead, use a native ``pkgutil``
+  namespace package.
+- Now requires docutils >= 0.18.1. This effectively requires Sphinx
+  versions newer than 5.0.
 
 
 0.17 (2021-03-31)
