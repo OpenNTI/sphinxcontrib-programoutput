@@ -11,6 +11,7 @@
   namespace package.
 - Now requires docutils >= 0.18.1. This effectively requires Sphinx
   versions newer than 5.0.
+- Add the ``language`` option. Added in :pr:`62` by Even Rouault.
 
 
 0.17 (2021-03-31)

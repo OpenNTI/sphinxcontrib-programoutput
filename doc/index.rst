@@ -231,6 +231,14 @@ Reference
    .. versionchanged:: 0.16
       Add the ``caption`` and ``name`` options.
 
+   A ``language`` option can be given to specify the language of the output.
+   This can be set for example to ``json`` for a program whose output is JSON.
+   In that case, this must only be used with the :dir:`program-output` directive,
+   and not :dir:`command-output`.
+
+   .. versionchanged:: 0.18
+      Add the ``language`` option.
+
 .. directive:: command-output
 
    Same as :dir:`program-output`, but with enabled ``prompt`` option.

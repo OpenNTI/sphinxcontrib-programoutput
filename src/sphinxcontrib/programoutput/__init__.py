@@ -92,7 +92,8 @@ class ProgramOutputDirective(rst.Directive):
     option_spec = dict(shell=flag, prompt=flag, nostderr=flag,
                        ellipsis=_slice, extraargs=unchanged,
                        returncode=nonnegative_int, cwd=unchanged,
-                       caption=unchanged, name=unchanged)
+                       caption=unchanged, name=unchanged,
+                       language=unchanged)
 
     def run(self):
         env = self.state.document.settings.env
@@ -112,6 +113,7 @@ class ProgramOutputDirective(rst.Directive):
         node['working_directory'] = cwd
         node['use_shell'] = 'shell' in self.options
         node['returncode'] = self.options.get('returncode', 0)
+        node['language'] = self.options.get('language', 'text')
         if 'ellipsis' in self.options:
             node['strip_lines'] = self.options['ellipsis']
         if 'caption' in self.options:
@@ -312,7 +314,7 @@ def run_programs(app, doctree):
                 )
 
             new_node = node_class(output, output)
-            new_node['language'] = 'text'
+            new_node['language'] = node['language']
             node.replace_self(new_node)
 
 
