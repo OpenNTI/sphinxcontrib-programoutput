@@ -97,6 +97,7 @@ setup(
     extras_require={
         'test': tests_require,
         'docs': [
+            'furo',
         ],
     },
     python_requires=">=3.8",

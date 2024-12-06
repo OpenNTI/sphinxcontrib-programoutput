@@ -26,7 +26,7 @@
 
 import sphinxcontrib.programoutput as programoutput
 
-needs_sphinx = '1.0'
+needs_sphinx = '5.0'
 
 extensions = [
     'sphinx.ext.autodoc',
@@ -39,19 +39,30 @@ extensions = [
 source_suffix = '.rst'
 master_doc = 'index'
 
-project = u'sphinxcontrib-programoutput'
-copyright = u'2010, 2011, Sebastian Wiesner'
+project = 'sphinxcontrib-programoutput'
+copyright = '2010, 2011, Sebastian Wiesner'
 version = '.'.join(programoutput.__version__.split('.')[:2])
 release = programoutput.__version__
 
 exclude_patterns = ['_build/*']
 
-html_theme = 'default'
+html_theme = 'furo'
 html_static_path = []
 
+html_css_files = [
+    'custom.css',
+]
+
+html_theme_options = {
+    'light_css_variables': {
+        'font-stack': '"SF Pro",-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji"',
+        'font-stack--monospace': '"JetBrainsMono", "JetBrains Mono", "JetBrains Mono Regular", "JetBrainsMono-Regular", ui-monospace, profont, monospace',
+    },
+}
+
 intersphinx_mapping = {
-    'python': ('https://docs.python.org', None),
-    'ansi': ('http://packages.python.org/sphinxcontrib-ansi', None)
+    'python': ('https://docs.python.org/', None),
+
 }
 
 extlinks = {

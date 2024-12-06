@@ -291,7 +291,7 @@ but respect these guidelines:
   <https://gun.io/blog/how-to-github-fork-branch-and-pull-request/>`_.
 - Use a topic branch to easily amend a pull request later, if necessary.
 - Write `good commit messages
-  <http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html>`_.
+  <https://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html>`_.
 - Squash commits on the topic branch before opening a pull request.
 - Respect :pep:`8` (use `pep8`_ to check your coding style compliance)
 - Add unit tests.
@@ -320,11 +320,11 @@ License
             directive with the ``prompt`` option set.
 
 
-.. _Sphinx: http://www.sphinx-doc.org/en/stable/
+.. _Sphinx: https://www.sphinx-doc.org/en/master/
 .. _PyPI: https://pypi.python.org/pypi/sphinxcontrib-programoutput
-.. _github: https://github.com/NextThought/sphinxcontrib-programoutput
-.. _readme: https://github.com/NextThought/sphinxcontrib-programoutput/blob/master/README.rst
+.. _github: https://github.com/OpenNTI/sphinxcontrib-programoutput
+.. _readme: https://github.com/OpenNTI/sphinxcontrib-programoutput/blob/master/README.rst
 .. _format string: https://docs.python.org/2/library/string.html#formatstrings
-.. _issue tracker: https://github.com/NextThought/sphinxcontrib-programoutput/issues
+.. _issue tracker: https://github.com/OpenNTI/sphinxcontrib-programoutput/issues
 .. _pep8: https://pypi.python.org/pypi/pep8/
-.. _MyST: https://myst-parser.readthedocs.io/en/latest/using/syntax.html#extended-block-tokens
+.. _MyST: https://myst-parser.readthedocs.io/en/latest/syntax/roles-and-directives.html
