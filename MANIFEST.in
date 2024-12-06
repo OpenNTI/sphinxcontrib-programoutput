@@ -8,5 +8,7 @@ include .pylintrc
 include *.txt
 include *.yml
 
+prune docs/_build
+
 recursive-include src *.py
-recursive-include doc *.rst *.py *.txt
+recursive-include docs *.rst *.py *.txt *.css
