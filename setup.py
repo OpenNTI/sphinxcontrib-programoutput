@@ -48,6 +48,10 @@ def read_version_number():
         raise ValueError('Could not extract version number')
 
 tests_require = [
+    # Sphinx 8.1 stopped raising SphinxWarning when the ``logger.warning``
+    # method is invoked. So we now have to test side effects.
+    # That's OK, and the same side effect test works on older
+    # versions as well.
 ]
 
 setup(
@@ -88,7 +92,7 @@ setup(
     package_dir={'': 'src'},
     include_package_data=True,
     install_requires=[
-        'Sphinx>=1.7.0',
+        'Sphinx>=5.0.0',
     ],
     extras_require={
         'test': tests_require,

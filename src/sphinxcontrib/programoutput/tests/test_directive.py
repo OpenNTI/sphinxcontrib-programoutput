@@ -29,8 +29,9 @@ import functools
 import os
 import sys
 import unittest
+from unittest.mock import patch as Patch
 
-from sphinx.errors import SphinxWarning
+
 from docutils.nodes import caption, container, literal_block, system_message
 
 from sphinxcontrib.programoutput import Command
@@ -288,13 +289,16 @@ spam with eggs""")
     .. program-output:: python -c 'import sys; sys.exit(1)'""",
                   ignore_warnings=False)
     def test_unexpected_return_code(self):
-        with self.assertRaises(SphinxWarning) as excinfo:
+        with Patch('sphinxcontrib.programoutput.logger.warning') as patch_warning:
             self.app.build()
-        self.assertIn('Unexpected return code 1 from command',
-                      excinfo.exception.args[0])
+        patch_warning.assert_called_once()
+        msg, returncode, command, _output = patch_warning.call_args.args
+        self.assertEqual(returncode, 1)
+        self.assertIn('Unexpected return code %s from command',
+                      msg)
         parsed_command = (sys.executable, '-c', 'import sys; sys.exit(1)')
-        self.assertIn(repr(parsed_command),
-                      excinfo.exception.args[0])
+        self.assertIn(repr(parsed_command), repr(command))
+
 
 
     @with_content("""\
@@ -302,18 +306,16 @@ spam with eggs""")
        :shell:""",
                   ignore_warnings=False)
     def test_shell_with_unexpected_return_code(self):
-        with self.assertRaises(SphinxWarning) as excinfo:
+        with Patch('sphinxcontrib.programoutput.logger.warning') as patch_warning:
             self.app.build()
-        msg = excinfo.exception.args[0]
-        self.assertIn('Unexpected return code 1 from command',
-                      msg)
-        self.assertIn("import sys; sys.exit",
+        patch_warning.assert_called_once()
+        msg, returncode, command, output = patch_warning.call_args.args
+        self.assertEqual(returncode, 1)
+        self.assertIn('Unexpected return code %s from command',
                       msg)
         # Python 2 include the u'' prefix on the output string.
-        self.assertIn('(output=', msg)
-        self.assertIn('\'some output\')', msg)
-        self.assertIn('hide_standard_error=', msg)
-        self.assertIn('working_directory=', msg)
+        self.assertEqual('some output', output)
+
 
     @with_content("""\
     .. program-output:: python -c 'import sys; print("foo"); sys.exit(1)'
@@ -343,7 +345,7 @@ spam with eggs""")
         # check that a proper error message appears in the document
         message = self.doctree.next_node(system_message)
         self.assertTrue(message)
-        srcfile = os.path.join(self.srcdir, 'content', 'doc.rst')
+        srcfile = os.path.realpath(os.path.join(self.srcdir, 'content', 'doc.rst'))
         self.assertEqual(message['source'], srcfile)
         self.assertEqual(message['line'], 5)
 
@@ -361,7 +363,7 @@ spam with eggs""")
         srcdir = self.srcdir
         message = doctree.next_node(system_message)
         self.assertTrue(message)
-        srcfile = os.path.join(srcdir, 'content', 'doc.rst')
+        srcfile = os.path.realpath(os.path.join(srcdir, 'content', 'doc.rst'))
         self.assertEqual(message['source'], srcfile)
         self.assertEqual(message['line'], 5)
 

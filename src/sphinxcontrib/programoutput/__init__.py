@@ -266,7 +266,7 @@ def run_programs(app, doctree):
 
     cache = app.env.programoutput_cache
 
-    for node in doctree.traverse(program_output):
+    for node in doctree.findall(program_output):
         command = Command.from_program_output_node(node)
         try:
             returncode, output = cache[command]
@@ -293,8 +293,8 @@ def run_programs(app, doctree):
             if 'strip_lines' in node:
                 start, stop = node['strip_lines']
                 lines = output.splitlines()
-                lines[start:stop] = [u'...']
-                output = u'\n'.join(lines)
+                lines[start:stop] = ['...']
+                output = '\n'.join(lines)
 
             if node['show_prompt']:
                 # The command in the node is also guaranteed to be
