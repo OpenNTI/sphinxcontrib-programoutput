@@ -25,7 +25,8 @@
 
 import os
 import re
-from setuptools import setup, find_packages
+from setuptools import setup
+from setuptools import find_namespace_packages
 
 def read_desc():
     with open('README.rst', encoding='utf-8') as stream:
@@ -83,17 +84,14 @@ setup(
         'Framework :: Sphinx :: Extension',
     ],
     platforms='any',
-    packages=find_packages('src'),
+    packages=find_namespace_packages('src'),
     package_dir={'': 'src'},
-    namespace_packages=['sphinxcontrib'],
     include_package_data=True,
     install_requires=[
         'Sphinx>=1.7.0',
     ],
-    tests_require=tests_require,
     extras_require={
         'test': tests_require,
     },
     python_requires=">=3.8",
-    test_suite='sphinxcontrib.programoutput.tests',
 )

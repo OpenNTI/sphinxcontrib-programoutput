@@ -5,7 +5,10 @@
 0.18 (unreleased)
 =================
 
-- Drop support for Python < 3.8. This means Python 2 is no longer supported.
+- Drop support for Python < 3.8. This means Python 2 is no longer
+  supported.
+- Drop setuptools dependency. Instead, use a native ``pkgutil``
+  namespace package.
 
 
 0.17 (2021-03-31)
