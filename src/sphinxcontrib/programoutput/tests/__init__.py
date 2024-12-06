@@ -10,7 +10,7 @@ from sphinx.application import Sphinx
 
 from functools import update_wrapper
 
-# pylint:disable=no-self-use,protected-access,too-few-public-methods
+# pylint:disable=protected-access,too-few-public-methods
 # useless-object-inheritance is version specific
 # pylint:disable=bad-option-value,useless-object-inheritance
 
@@ -123,10 +123,10 @@ class AppMixin(object):
         srcdir = os.path.join(tmpdir, 'src')
         os.mkdir(srcdir)
         confpy = os.path.join(srcdir, 'conf.py')
-        with open(confpy, 'w') as f:
+        with open(confpy, 'w', encoding='utf-8') as f:
             f.write(CONF_PY)
         index_document = os.path.join(srcdir, 'index.rst')
-        with open(index_document, 'w') as f:
+        with open(index_document, 'w', encoding='utf-8') as f:
             f.write("""\
     .. toctree::
 

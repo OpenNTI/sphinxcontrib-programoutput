@@ -22,9 +22,6 @@
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
-
-from __future__ import print_function, division, absolute_import
-
 import os
 import pickle
 import sys
@@ -46,12 +43,12 @@ class TestCache(AppMixin,
 
     def test_simple(self):
         cache = ProgramOutputCache()
-        self.assert_cache(cache, Command([u'echo', u'blök']), u'blök')
+        self.assert_cache(cache, Command(['echo', 'blök']), 'blök')
 
 
     def test_shell(self):
         cache = ProgramOutputCache()
-        self.assert_cache(cache, Command(u'echo blök', shell=True), u'blök')
+        self.assert_cache(cache, Command('echo blök', shell=True), 'blök')
 
 
     def test_working_directory(self):

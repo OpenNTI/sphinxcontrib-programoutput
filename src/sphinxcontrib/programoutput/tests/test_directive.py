@@ -23,8 +23,6 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-from __future__ import print_function, division, absolute_import
-
 import functools
 import os
 import sys
@@ -66,7 +64,8 @@ def with_content(content, **kwargs):
 
 class TestDirective(AppMixin,
                     unittest.TestCase):
-
+    # It's a test class, doesn't matter.
+    # pylint:disable=too-many-public-methods
     def assert_output(self, doctree, output, **kwargs):
         __tracebackhide__ = True
         literal = doctree.next_node(literal_block)
@@ -86,7 +85,7 @@ class TestDirective(AppMixin,
             else:
                 self.assertIn(kwargs.get('name'), literal.get('ids'))
 
-    def assert_cache(self, app, cmd, output, use_shell=False,
+    def assert_cache(self, app, cmd, output, *, use_shell=False,
                      hide_standard_error=False, returncode=0,
                      working_directory=None):
         # pylint:disable=too-many-arguments
@@ -309,7 +308,7 @@ spam with eggs""")
         with Patch('sphinxcontrib.programoutput.logger.warning') as patch_warning:
             self.app.build()
         patch_warning.assert_called_once()
-        msg, returncode, command, output = patch_warning.call_args.args
+        msg, returncode, _command, output = patch_warning.call_args.args
         self.assertEqual(returncode, 1)
         self.assertIn('Unexpected return code %s from command',
                       msg)
@@ -340,7 +339,7 @@ spam with eggs""")
         self.assert_cache(app, sys.executable + " -c 'import sys; sys.exit(1)'", '',
                           returncode=1)
 
-    @with_content(u".. program-output:: 'spam with eggs'", ignore_warnings=True)
+    @with_content(".. program-output:: 'spam with eggs'", ignore_warnings=True)
     def test_non_existing_executable(self):
         # check that a proper error message appears in the document
         message = self.doctree.next_node(system_message)
@@ -372,28 +371,28 @@ spam with eggs""")
         self.assertIn('subdir', message_text)
         self.assertIn("No such file or directory", message_text)
 
-    @with_content(u'.. command-output:: echo "U+2264 ≤ LESS-THAN OR EQUAL TO"')
+    @with_content('.. command-output:: echo "U+2264 ≤ LESS-THAN OR EQUAL TO"')
     def test_default_prompt_with_unicode_output(self):
         self.assert_output(
-            self.doctree, u"""\
+            self.doctree, """\
 $ echo "U+2264 ≤ LESS-THAN OR EQUAL TO"
 U+2264 ≤ LESS-THAN OR EQUAL TO""")
         self.assert_cache(
             self.app,
-            u'echo "U+2264 ≤ LESS-THAN OR EQUAL TO"',
-            u'U+2264 ≤ LESS-THAN OR EQUAL TO')
+            'echo "U+2264 ≤ LESS-THAN OR EQUAL TO"',
+            'U+2264 ≤ LESS-THAN OR EQUAL TO')
 
-    @with_content(u'.. command-output:: echo "U+2264 ≤ LESS-THAN OR EQUAL TO"',
+    @with_content('.. command-output:: echo "U+2264 ≤ LESS-THAN OR EQUAL TO"',
                   programoutput_prompt_template=b'> {command}\n{output}')
     def test_bytes_prompt_with_unicode_output(self):
         self.assert_output(
-            self.doctree, u"""\
+            self.doctree, """\
 > echo "U+2264 ≤ LESS-THAN OR EQUAL TO"
 U+2264 ≤ LESS-THAN OR EQUAL TO""")
         self.assert_cache(
             self.app,
-            u'echo "U+2264 ≤ LESS-THAN OR EQUAL TO"',
-            u'U+2264 ≤ LESS-THAN OR EQUAL TO')
+            'echo "U+2264 ≤ LESS-THAN OR EQUAL TO"',
+            'U+2264 ≤ LESS-THAN OR EQUAL TO')
 
     @with_content("""\
     .. program-output:: echo -e "U+2264 ≤ LESS-THAN OR EQUAL TO\\n≤ line2\\n≤ line3"
@@ -401,13 +400,13 @@ U+2264 ≤ LESS-THAN OR EQUAL TO""")
     """)
     def test_unicode_output_with_ellipsis(self):
         self.assert_output(
-            self.doctree, u"""\
+            self.doctree, """\
 U+2264 \u2264 LESS-THAN OR EQUAL TO\n\u2264 line2\n..."""
         )
         self.assert_cache(
             self.app,
-            u'echo -e "U+2264 ≤ LESS-THAN OR EQUAL TO\\n≤ line2\\n≤ line3"',
-            u'U+2264 \u2264 LESS-THAN OR EQUAL TO\n\u2264 line2\n\u2264 line3'
+            'echo -e "U+2264 ≤ LESS-THAN OR EQUAL TO\\n≤ line2\\n≤ line3"',
+            'U+2264 \u2264 LESS-THAN OR EQUAL TO\n\u2264 line2\n\u2264 line3'
         )
 
     @with_content("""\
