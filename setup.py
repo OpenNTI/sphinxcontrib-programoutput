@@ -96,6 +96,8 @@ setup(
     ],
     extras_require={
         'test': tests_require,
+        'docs': [
+        ],
     },
     python_requires=">=3.8",
 )
