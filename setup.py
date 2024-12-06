@@ -28,16 +28,17 @@ import re
 from setuptools import setup, find_packages
 
 def read_desc():
-    with open('README.rst') as stream:
+    with open('README.rst', encoding='utf-8') as stream:
         readme = stream.read()
-    with open('CHANGES.rst') as stream:
+    with open('CHANGES.rst', encoding='utf-8') as stream:
         changes = stream.read()
 
     return readme + '\n\n' + changes
 
 def read_version_number():
     VERSION_PATTERN = re.compile(r"__version__ = '([^']+)'")
-    with open(os.path.join('src', 'sphinxcontrib', 'programoutput', '__init__.py')) as stream:
+    with open(os.path.join('src', 'sphinxcontrib', 'programoutput', '__init__.py'),
+              encoding='utf-8') as stream:
         for line in stream:
             match = VERSION_PATTERN.search(line)
             if match:
@@ -56,7 +57,7 @@ setup(
     author='Sebastian Wiesner',
     author_email='lunaryorn@gmail.com',
     maintainer="Jason Madden",
-    maintainer_email='jason@nextthought.com',
+    maintainer_email='jason@seecoresoftware.com',
     description='Sphinx extension to include program output',
     long_description=read_desc(),
     keywords="sphinx cli command output program example",
@@ -67,13 +68,13 @@ setup(
         'License :: OSI Approved :: BSD License',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 3',
-        "Programming Language :: Python :: 2.7",
-        "Programming Language :: Python :: 3.6",
-        "Programming Language :: Python :: 3.7",
+        'Programming Language :: Python :: 3 :: Only',
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
+        "Programming Language :: Python :: 3.13",
         "Programming Language :: Python :: Implementation :: CPython",
         "Programming Language :: Python :: Implementation :: PyPy",
         'Topic :: Documentation',
@@ -93,6 +94,6 @@ setup(
     extras_require={
         'test': tests_require,
     },
-    python_requires=">=2.7,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*",
+    python_requires=">=3.8",
     test_suite='sphinxcontrib.programoutput.tests',
 )

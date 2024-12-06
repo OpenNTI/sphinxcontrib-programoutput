@@ -5,7 +5,7 @@
 0.18 (unreleased)
 =================
 
-- Nothing changed yet.
+- Drop support for Python < 3.8. This means Python 2 is no longer supported.
 
 
 0.17 (2021-03-31)
