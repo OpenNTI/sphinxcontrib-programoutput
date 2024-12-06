@@ -37,19 +37,9 @@ jobs:
     - name: Test
       run: |
         coverage run -m zope.testrunner --test-path=src
+        coverage report
     - name: Lint
       if: matrix.python-version == '3.12'
       run: |
         python -m pip install -U pylint
         pylint src
-    - name: Submit to Coveralls
-      uses: coverallsapp/github-action@v2
-      with:
-        parallel: true
-
-  coveralls_finish:
-    needs: test
-    runs-on: ubuntu-latest
-    steps:
-    - name: Coveralls Finished
-      uses: coverallsapp/github-action@v2
