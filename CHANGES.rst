@@ -2,7 +2,7 @@
  Changes
 =========
 
-0.18 (unreleased)
+0.18 (2024-12-06)
 =================
 
 - Drop support for Python < 3.8. This means Python 2 is no longer
