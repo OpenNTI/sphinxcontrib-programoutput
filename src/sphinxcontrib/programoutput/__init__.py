@@ -48,7 +48,7 @@ from docutils.statemachine import StringList
 
 from sphinx.util import logging as sphinx_logging
 
-__version__ = '0.18'
+__version__ = '0.19.dev0'
 
 logger = sphinx_logging.getLogger('contrib.programoutput')
 
