@@ -77,21 +77,6 @@ def _container_wrapper(directive, literal_node, caption):
     return container_node
 
 
-def wrap_with_caption(node, caption, source='', line=0):
-    """
-    Wrap the given node in a container with a caption.
-    This mimics a figure-like construct.
-    """
-    container = nodes.container('', classes=['literal-block-wrapper'])
-    caption_node = nodes.caption(caption, caption)
-    caption_node.source = source
-    caption_node.line = line
-    container += caption_node
-    container += node
-    return container
-
-
-
 def _slice(value):
     parts = [int(v.strip()) for v in value.split(',')]
     if len(parts) > 2:
@@ -137,14 +122,15 @@ class ProgramOutputDirective(rst.Directive):
         node['use_shell'] = 'shell' in self.options
         node['returncode'] = self.options.get('returncode', 0)
         node['language'] = self.options.get('language', 'text')
-        node['rich'] = 'rich' in self.options:
-        
-        # Store the caption (if provided) regardless of the output mode.
-        if 'caption' in self.options:
-            node['caption'] = self.options['caption'] or self.arguments[0]
-        
+        node['rich'] = 'rich' in self.options
+
         if 'ellipsis' in self.options:
             node['strip_lines'] = self.options['ellipsis']
+        
+        if 'caption' in self.options:
+            caption = self.options['caption'] or self.arguments[0]
+            node = _container_wrapper(self, node, caption)
+
         self.add_name(node)
         return [node]
 
@@ -284,10 +270,7 @@ def run_programs(app, doctree):
     Each node is replaced with the output of the executed command.
 
     If the 'rich' option is enabled on the node, the output is rendered as a styled SVG
-    using Rich's Console. The console width is configurable via the
-    'programoutput_rich_width' setting in conf.py. An optional title (':title:') can be provided
-    for the rich SVG output. In both rich and literal modes, if a ':caption:' is provided,
-    the output will be wrapped in a container with a caption.
+    using Rich's Console. The console width is configurable via envvar COLUMNS
     """
     cache = app.env.programoutput_cache
 
@@ -329,7 +312,7 @@ def run_programs(app, doctree):
                 )
 
             # Check if the 'rich' option is enabled to render output as a Rich SVG.
-            rich_flow = node.get('rich', False)
+            rich_flow = node.get('rich', None) or app.config.programoutput_force_rich
             if rich_flow:
                 try:
                     # Import Rich's Console for rendering.
@@ -340,13 +323,10 @@ def run_programs(app, doctree):
                     logger.warning("Rich is not installed; using a plain literal block instead.")
             
                 else:
-                    # Get the console width from configuration (default: 80).
-                    rich_width = app.config.programoutput_rich_width
-                    # Create a Console instance in record mode with the configured width.
-                    console = Console(record=True, width=rich_width)
+                    console = Console(record=True)
                     console.print(Text.from_ansi(output))
                     # Export the captured console output to an SVG string with inline styles.
-                    svg_output = console.export_svg()
+                    svg_output = console.export_svg(title='')
                     # Create a raw node with the SVG content for HTML output.
                     new_node = nodes.raw('', svg_output, format='html')
             
@@ -355,10 +335,6 @@ def run_programs(app, doctree):
                 new_node = nodes.literal_block(output, output)
                 new_node['language'] = node['language']
 
-            # If a caption is provided, wrap the output node in a container with a caption.
-            if 'caption' in node:
-                new_node = wrap_with_caption(new_node, node['caption'], node.get('source', ''), node.line)
-            # Replace the original node with the new node.
             node.replace_self(new_node)
 
 
@@ -377,8 +353,7 @@ def init_cache(app):
 
 def setup(app):
     app.add_config_value('programoutput_prompt_template', '$ {command}\n{output}', 'env')
-    # Add a configuration value for the Rich console width (default: 80)
-    app.add_config_value('programoutput_rich_width', 100, 'env')
+    app.add_config_value('programoutput_force_rich', False, 'env')
     app.add_directive('program-output', ProgramOutputDirective)
     app.add_directive('command-output', ProgramOutputDirective)
     app.connect('builder-inited', init_cache)

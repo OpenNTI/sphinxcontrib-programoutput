@@ -46,9 +46,8 @@ Homepage = "https://github.com/OpenNTI/sphinxcontrib-programoutput"
 Changelog = "https://github.com/OpenNTI/sphinxcontrib-programoutput/blob/master/CHANGES.rst"
 
 [project.optional-dependencies]
-docs = [
-    "furo",
-]
+docs = ["furo"]
+rich = ["rich"]
 
 
 [tool.setuptools.packages.find]

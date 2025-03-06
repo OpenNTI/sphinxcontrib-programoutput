@@ -149,10 +149,12 @@ Remember to use ``shell`` carefully to avoid unintended interpretation of shell
 syntax and swallowing of fatal errors!
 
 
-Rich output
------------
+Rich SVG output
+---------------
 
-If you want to include rich output, like colorized text or tables, you can use ``:rich:``:: 
+By default, this extension outputs the command result as a literal block. However, you can enable
+Rich-based SVG output to display colored and styled output in an SVG format::
+
 
    .. command-output:: ls -l
       :rich:
@@ -161,6 +163,9 @@ If you want to include rich output, like colorized text or tables, you can use `
 .. command-output:: ls -l
    :rich:
 
+
+If you want this output by default, enable it globally in your ``conf.py`` with ``programoutput_force_rich = True``. 
+With this configuration, you won't need to flag each directive with ``:rich:``. 
 
 
 Error handling
