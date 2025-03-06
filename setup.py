@@ -97,6 +97,7 @@ setup(
     ],
     extras_require={
         'test': tests_require,
+        'rich': ['rich'],
         'docs': [
             'furo',
         ],

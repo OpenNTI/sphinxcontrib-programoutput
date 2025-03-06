@@ -77,6 +77,21 @@ def _container_wrapper(directive, literal_node, caption):
     return container_node
 
 
+def wrap_with_caption(node, caption, source='', line=0):
+    """
+    Wrap the given node in a container with a caption.
+    This mimics a figure-like construct.
+    """
+    container = nodes.container('', classes=['literal-block-wrapper'])
+    caption_node = nodes.caption(caption, caption)
+    caption_node.source = source
+    caption_node.line = line
+    container += caption_node
+    container += node
+    return container
+
+
+
 def _slice(value):
     parts = [int(v.strip()) for v in value.split(',')]
     if len(parts) > 2:
@@ -89,11 +104,20 @@ class ProgramOutputDirective(rst.Directive):
     final_argument_whitespace = True
     required_arguments = 1
 
-    option_spec = dict(shell=flag, prompt=flag, nostderr=flag,
-                       ellipsis=_slice, extraargs=unchanged,
-                       returncode=nonnegative_int, cwd=unchanged,
-                       caption=unchanged, name=unchanged,
-                       language=unchanged)
+    option_spec = dict(
+        shell=flag,
+        prompt=flag,
+        nostderr=flag,
+        ellipsis=_slice,
+        extraargs=unchanged,
+        returncode=nonnegative_int,
+        cwd=unchanged,
+        caption=unchanged,   # Caption for wrapping the output (for both rich and literal).
+        title=unchanged,     # Title for rich SVG export only.
+        name=unchanged,
+        language=unchanged,
+        rich=flag            # When provided, enable rich SVG output.
+    )
 
     def run(self):
         env = self.state.document.settings.env
@@ -114,14 +138,21 @@ class ProgramOutputDirective(rst.Directive):
         node['use_shell'] = 'shell' in self.options
         node['returncode'] = self.options.get('returncode', 0)
         node['language'] = self.options.get('language', 'text')
+        
+        import ipdb;ipdb.set_trace()
+        if 'rich' in self.options:
+            node['rich'] = True
+            if 'title' in self.options:
+                node['title'] = self.options['title']
+        # Store the caption (if provided) regardless of the output mode.
+        if 'caption' in self.options:
+            node['caption'] = self.options['caption'] or self.arguments[0]
+        
         if 'ellipsis' in self.options:
             node['strip_lines'] = self.options['ellipsis']
-        if 'caption' in self.options:
-            caption = self.options['caption'] or self.arguments[0]
-            node = _container_wrapper(self, node, caption)
-
         self.add_name(node)
         return [node]
+
 
 
 _Command = namedtuple(
@@ -253,54 +284,47 @@ def _prompt_template_as_unicode(app):
 
 def run_programs(app, doctree):
     """
-    Execute all programs represented by ``program_output`` nodes in
-    ``doctree``.  Each ``program_output`` node in ``doctree`` is then
-    replaced with a node, that represents the output of this program.
+    Execute all commands represented by `program_output` nodes in the doctree.
+    Each node is replaced with the output of the executed command.
 
-    The program output is retrieved from the cache in
-    ``app.env.programoutput_cache``.
+    If the 'rich' option is enabled on the node, the output is rendered as a styled SVG
+    using Rich's Console. The console width is configurable via the
+    'programoutput_rich_width' setting in conf.py. An optional title (':title:') can be provided
+    for the rich SVG output. In both rich and literal modes, if a ':caption:' is provided,
+    the output will be wrapped in a container with a caption.
     """
-
     cache = app.env.programoutput_cache
 
     for node in doctree.findall(program_output):
+        # Create a Command instance from the node's attributes.
         command = Command.from_program_output_node(node)
         try:
+            # Retrieve the command output from the cache (execute the command if not cached).
             returncode, output = cache[command]
         except EnvironmentError as error:
+            # Log error and replace the node with an error message if command execution fails.
             error_message = 'Command {0} failed: {1}'.format(command, error)
             error_node = doctree.reporter.error(error_message, base_node=node)
-            # Sphinx 1.8.0b1 started dropping all system_message nodes with a
-            # level less than 5 by default (or 2 if `keep_warnings` is set to true).
-            # This appears to be undocumented. Reporting failures is an important
-            # part of what this extension does, so we raise the default level.
-            error_node['level'] = 6
+            error_node['level'] = 6  # Set high severity to ensure visibility.
             node.replace_self(error_node)
+            continue
         else:
+            # Log a warning if the return code does not match the expected value.
             if returncode != node['returncode']:
                 logger.warning(
                     'Unexpected return code %s from command %r (output=%r)',
                     returncode, command, output
                 )
 
-            # replace lines with ..., if ellipsis is specified
-
-            # Recall that `output` is guaranteed to be a unicode string on
-            # all versions of Python.
+            # If the 'ellipsis' option is specified, replace the indicated lines with an ellipsis.
             if 'strip_lines' in node:
                 start, stop = node['strip_lines']
                 lines = output.splitlines()
                 lines[start:stop] = ['...']
                 output = '\n'.join(lines)
 
+            # Format output with a prompt if 'show_prompt' is enabled.
             if node['show_prompt']:
-                # The command in the node is also guaranteed to be
-                # unicode, but the prompt template might not be. This
-                # could be a native string on Python 2, or one with an
-                # explicit b prefix on 2 or 3 (for some reason).
-                # Attempt to decode it using UTF-8, preferentially, or
-                # fallback to sys.getfilesystemencoding(). If all that fails, fall back
-                # to the default encoding (which may have often worked before).
                 prompt_template = _prompt_template_as_unicode(app)
                 output = prompt_template.format(
                     command=node['command'],
@@ -308,14 +332,37 @@ def run_programs(app, doctree):
                     returncode=returncode
                 )
 
-            # The node_class used to be switchable to
-            # `sphinxcontrib.ansi.ansi_literal_block` if
-            # `app.config.programoutput_use_ansi` was set. But
-            # sphinxcontrib.ansi is no longer available on PyPI, so we
-            # can't test that. And if we can't test it, we can't
-            # support it.
-            new_node = nodes.literal_block(output, output)
-            new_node['language'] = node['language']
+            # Check if the 'rich' option is enabled to render output as a Rich SVG.
+            if node.get('rich', False):
+                try:
+                    # Import Rich's Console for rendering.
+                    from rich.console import Console
+                except ImportError:
+                    # If Rich is not installed, log a warning and fall back to a literal block.
+                    logger.warning("Rich is not installed; using a plain literal block instead.")
+                    new_node = nodes.literal_block(output, output)
+                    new_node['language'] = node['language']
+                else:
+                    # Get the console width from configuration (default: 80).
+                    rich_width = app.config.programoutput_rich_width
+                    # Create a Console instance in record mode with the configured width.
+                    console = Console(record=True, width=rich_width)
+                    console.print(output)
+                    # Use the provided title for the SVG if specified; otherwise, pass an empty string.
+                    svg_title = node.get('title', '')
+                    # Export the captured console output to an SVG string with inline styles.
+                    svg_output = console.export_svg(title=svg_title, inline_styles=True)
+                    # Create a raw node with the SVG content for HTML output.
+                    new_node = nodes.raw('', svg_output, format='html')
+            else:
+                # For non-rich output, simply create a literal block with the command output.
+                new_node = nodes.literal_block(output, output)
+                new_node['language'] = node['language']
+
+            # If a caption is provided, wrap the output node in a container with a caption.
+            if 'caption' in node:
+                new_node = wrap_with_caption(new_node, node['caption'], node.get('source', ''), node.line)
+            # Replace the original node with the new node.
             node.replace_self(new_node)
 
 
@@ -333,8 +380,10 @@ def init_cache(app):
 
 
 def setup(app):
-    app.add_config_value('programoutput_prompt_template',
-                         '$ {command}\n{output}', 'env')
+    import ipdb;ipdb.set_trace()
+    app.add_config_value('programoutput_prompt_template', '$ {command}\n{output}', 'env')
+    # Add a configuration value for the Rich console width (default: 80)
+    app.add_config_value('programoutput_rich_width', 100, 'env')
     app.add_directive('program-output', ProgramOutputDirective)
     app.add_directive('command-output', ProgramOutputDirective)
     app.connect('builder-inited', init_cache)

@@ -149,6 +149,20 @@ Remember to use ``shell`` carefully to avoid unintended interpretation of shell
 syntax and swallowing of fatal errors!
 
 
+Rich output
+-----------
+
+If you want to include rich output, like colorized text or tables, you can use ``:rich:``:: 
+
+   .. command-output:: ls -l
+      :rich:
+
+
+.. command-output:: ls -l
+   :rich:
+
+
+
 Error handling
 --------------
 
