@@ -112,8 +112,7 @@ class ProgramOutputDirective(rst.Directive):
         extraargs=unchanged,
         returncode=nonnegative_int,
         cwd=unchanged,
-        caption=unchanged,   # Caption for wrapping the output (for both rich and literal).
-        title=unchanged,     # Title for rich SVG export only.
+        caption=unchanged,
         name=unchanged,
         language=unchanged,
         rich=flag            # When provided, enable rich SVG output.
@@ -138,12 +137,8 @@ class ProgramOutputDirective(rst.Directive):
         node['use_shell'] = 'shell' in self.options
         node['returncode'] = self.options.get('returncode', 0)
         node['language'] = self.options.get('language', 'text')
+        node['rich'] = 'rich' in self.options:
         
-        import ipdb;ipdb.set_trace()
-        if 'rich' in self.options:
-            node['rich'] = True
-            if 'title' in self.options:
-                node['title'] = self.options['title']
         # Store the caption (if provided) regardless of the output mode.
         if 'caption' in self.options:
             node['caption'] = self.options['caption'] or self.arguments[0]
@@ -222,7 +217,8 @@ class Command(_Command):
         # pylint:disable=consider-using-with
         return Popen(command, shell=self.shell, stdout=PIPE,
                      stderr=PIPE if self.hide_standard_error else STDOUT,
-                     cwd=self.working_directory)
+                     cwd=self.working_directory, 
+                     )
 
     def get_output(self):
         """
@@ -333,28 +329,28 @@ def run_programs(app, doctree):
                 )
 
             # Check if the 'rich' option is enabled to render output as a Rich SVG.
-            if node.get('rich', False):
+            rich_flow = node.get('rich', False)
+            if rich_flow:
                 try:
                     # Import Rich's Console for rendering.
                     from rich.console import Console
+                    from rich.text import Text
                 except ImportError:
-                    # If Rich is not installed, log a warning and fall back to a literal block.
+                    rich_flow = False
                     logger.warning("Rich is not installed; using a plain literal block instead.")
-                    new_node = nodes.literal_block(output, output)
-                    new_node['language'] = node['language']
+            
                 else:
                     # Get the console width from configuration (default: 80).
                     rich_width = app.config.programoutput_rich_width
                     # Create a Console instance in record mode with the configured width.
                     console = Console(record=True, width=rich_width)
-                    console.print(output)
-                    # Use the provided title for the SVG if specified; otherwise, pass an empty string.
-                    svg_title = node.get('title', '')
+                    console.print(Text.from_ansi(output))
                     # Export the captured console output to an SVG string with inline styles.
-                    svg_output = console.export_svg(title=svg_title, inline_styles=True)
+                    svg_output = console.export_svg()
                     # Create a raw node with the SVG content for HTML output.
                     new_node = nodes.raw('', svg_output, format='html')
-            else:
+            
+            if not rich_flow:
                 # For non-rich output, simply create a literal block with the command output.
                 new_node = nodes.literal_block(output, output)
                 new_node['language'] = node['language']
@@ -380,7 +376,6 @@ def init_cache(app):
 
 
 def setup(app):
-    import ipdb;ipdb.set_trace()
     app.add_config_value('programoutput_prompt_template', '$ {command}\n{output}', 'env')
     # Add a configuration value for the Rich console width (default: 80)
     app.add_config_value('programoutput_rich_width', 100, 'env')

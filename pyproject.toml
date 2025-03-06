@@ -1,5 +1,56 @@
 [build-system]
-requires = [
-   "wheel",
-   "setuptools",
+requires = ["setuptools"]
+build-backend="setuptools.build_meta"
+
+[project]
+name = "sphinxcontrib-programoutput"
+authors = [
+    {name = "Sebastian Wiesner", email = "lunaryorn@gmail.com"},
+    {name = "Jason Madden", email = "jason@seecoresoftware.com"},
 ]
+description="Sphinx extension to include program output"
+readme = "README.rst"
+license = { text = "BSD" }
+version = "0.19dev"
+requires-python = ">=3.8"
+keywords = ["sphinx", "cli", "command", "output", "program", "example"]
+
+classifiers = [
+    'Development Status :: 5 - Production/Stable',
+    'Intended Audience :: Developers',
+    'License :: OSI Approved :: BSD License',
+    'Operating System :: OS Independent',
+    'Programming Language :: Python',
+    'Programming Language :: Python :: 3 :: Only',
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Programming Language :: Python :: Implementation :: PyPy",
+    'Topic :: Documentation',
+    'Topic :: Utilities',
+    'Framework :: Sphinx',
+    'Framework :: Sphinx :: Extension',
+]
+
+dependencies = [
+    "sphinx",
+]
+
+[project.urls]
+Repository = "https://github.com/OpenNTI/sphinxcontrib-programoutput"
+Homepage = "https://github.com/OpenNTI/sphinxcontrib-programoutput"
+Changelog = "https://github.com/OpenNTI/sphinxcontrib-programoutput/blob/master/CHANGES.rst"
+
+[project.optional-dependencies]
+docs = [
+    "furo",
+]
+
+
+[tool.setuptools.packages.find]
+where = ["./src"]
+include = ["sphinxcontrib.programoutput"]
