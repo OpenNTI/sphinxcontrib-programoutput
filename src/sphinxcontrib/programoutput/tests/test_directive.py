@@ -451,6 +451,38 @@ U+2264 \u2264 LESS-THAN OR EQUAL TO\n\u2264 line2\n..."""
         self.assertEqual(literal["language"], "json")
 
 
+    @with_content("""\
+    .. program-output:: echo spam""",
+                  programoutput_use_ansi=True)
+    def test_use_ansi_config_forwarded(self):
+        with Patch('sphinxcontrib.programoutput._create_output_node') as create_output_node:
+            create_output_node.return_value = literal_block('spam', 'spam')
+            doctree = self.doctree
+        self.assert_output(doctree, 'spam')
+        create_output_node.assert_called_once()
+        self.assertEqual(create_output_node.call_args.args[0], 'spam')
+        self.assertTrue(create_output_node.call_args.args[1])
+        self.assert_cache(self.app, 'echo spam', 'spam')
+
+
+    @with_content("""\
+    .. program-output:: python -c 'print("\\x1b[31mspam\\x1b[0m")'""",
+                  programoutput_use_ansi=True)
+    def test_use_ansi_missing_dependency(self):
+        with Patch('sphinxcontrib.programoutput.logger.warning') as patch_warning:
+            doctree = self.doctree
+
+        self.assert_output(doctree, 'spam')
+        patch_warning.assert_called_once()
+        warning = patch_warning.call_args.args[0]
+        self.assertIn('programoutput_use_ansi is enabled', warning)
+        self.assert_cache(
+            self.app,
+            sys.executable + " -c 'print(\"\\x1b[31mspam\\x1b[0m\")'",
+            '\x1b[31mspam\x1b[0m'
+        )
+
+
 def test_suite():
     return unittest.defaultTestLoader.loadTestsFromName(__name__)
 

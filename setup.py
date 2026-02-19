@@ -53,6 +53,7 @@ tests_require = [
     # method is invoked. So we now have to test side effects.
     # That's OK, and the same side effect test works on older
     # versions as well.
+    "erbsland-sphinx-ansi; python_version >= '3.10'",
 ]
 
 setup(
