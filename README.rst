@@ -22,8 +22,7 @@ Install this extension from PyPI_::
 
    pip install sphinxcontrib-programoutput
 
-The extension requires Sphinx 1.7.0 and Python 2.7 or Python 3 (Python
-3.6+ is tested) at least.
+The extension requires Sphinx 5.0 and Python 3.8+.
 
 Usage
 =====
@@ -39,7 +38,7 @@ insert the output of programs.  The former just inserts the output::
 
 Output::
 
-   Python 2.7.1
+   Python 3.14.2
 
 The latter directive mimics a shell session, and is intended to show examples::
 
@@ -48,7 +47,7 @@ The latter directive mimics a shell session, and is intended to show examples::
 Output::
 
    $ python -V
-   Python 2.7.1
+   Python 3.14.2
 
 
 Please refer to the documentation_ for comprehensive information about usage and

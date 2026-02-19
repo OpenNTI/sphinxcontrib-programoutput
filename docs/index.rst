@@ -20,7 +20,7 @@ Use ``pip`` to install this extension from PyPI_::
 
    pip install sphinxcontrib-programoutput
 
-The extension requires Sphinx 1.3 and Python 2.7 or Python 3 at least.
+The extension requires Sphinx 5.0 and Python 3.8 at least.
 
 You can now add this extension to ``extensions``::
 
