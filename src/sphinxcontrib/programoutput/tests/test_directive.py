@@ -394,8 +394,9 @@ U+2264 ≤ LESS-THAN OR EQUAL TO""")
             'echo "U+2264 ≤ LESS-THAN OR EQUAL TO"',
             'U+2264 ≤ LESS-THAN OR EQUAL TO')
 
+
     @with_content("""\
-    .. program-output:: echo -e "U+2264 ≤ LESS-THAN OR EQUAL TO\\n≤ line2\\n≤ line3"
+    .. program-output:: python -c 'print("U+2264 ≤ LESS-THAN OR EQUAL TO\\n≤ line2\\n≤ line3")'
         :ellipsis: 2
     """)
     def test_unicode_output_with_ellipsis(self):
@@ -405,7 +406,7 @@ U+2264 \u2264 LESS-THAN OR EQUAL TO\n\u2264 line2\n..."""
         )
         self.assert_cache(
             self.app,
-            'echo -e "U+2264 ≤ LESS-THAN OR EQUAL TO\\n≤ line2\\n≤ line3"',
+            f"{sys.executable} -c 'print(\"U+2264 ≤ LESS-THAN OR EQUAL TO\\n≤ line2\\n≤ line3\")'",
             'U+2264 \u2264 LESS-THAN OR EQUAL TO\n\u2264 line2\n\u2264 line3'
         )
 
