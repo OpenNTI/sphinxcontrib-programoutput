@@ -66,9 +66,9 @@ intersphinx_mapping = {
 }
 
 extlinks = {
-    'issue': ('https://github.com/NextThought/sphinxcontrib-programoutput/issues/%s',
+    'issue': ('https://github.com/OpenNTI/sphinxcontrib-programoutput/issues/%s',
               'issue #%s'),
-    'pr': ('https://github.com/NextThought/sphinxcontrib-programoutput/pull/%s',
+    'pr': ('https://github.com/OpenNTI/sphinxcontrib-programoutput/pull/%s',
            'pull request #%s')
 }
 

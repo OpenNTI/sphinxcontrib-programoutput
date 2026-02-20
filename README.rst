@@ -2,12 +2,6 @@
  sphinxcontrib-programoutput
 =============================
 
-.. image:: https://github.com/NextThought/sphinxcontrib-programoutput/workflows/tests/badge.svg
-   :target: https://github.com/NextThought/sphinxcontrib-programoutput/actions?query=workflow%3Atests
-
-.. image:: https://coveralls.io/repos/github/NextThought/sphinxcontrib-programoutput/badge.svg
-   :target: https://coveralls.io/github/NextThought/sphinxcontrib-programoutput
-
 
 https://sphinxcontrib-programoutput.readthedocs.org
 
@@ -62,5 +56,5 @@ development process.
 
 
 .. _Sphinx: http://www.sphinx-doc.org/en/stable/
-.. _PyPI: http://pypi.python.org/pypi/sphinxcontrib-programoutput
+.. _PyPI: http://pypi.org/project/sphinxcontrib-programoutput
 .. _documentation: http://sphinxcontrib-programoutput.readthedocs.org

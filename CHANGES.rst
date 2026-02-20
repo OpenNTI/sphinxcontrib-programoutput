@@ -105,7 +105,7 @@
 ================
 
 - Forked and revived the project in `Gitub
-  <https://github.com/NextThought/sphinxcontrib-programoutput>`_.
+  <https://github.com/OpenNTI/sphinxcontrib-programoutput>`_.
 
 - Run the tests on Travis CI. Formatting and style is enforced by pylint.
 

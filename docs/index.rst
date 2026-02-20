@@ -276,10 +276,10 @@ This extension understands the following configuration options:
     ANSI escape sequences can be rendered by ``erbsland.sphinx.ansi``.
 
     This requires both the ``erbsland-sphinx-ansi`` package to be installed and
-   ``erbsland.sphinx.ansi`` to be enabled in your Sphinx ``extensions`` list.
-   If this integration is unavailable (package missing or extension not
-   enabled), a warning is logged and ANSI escape sequences are stripped from
-   the output block.
+    ``erbsland.sphinx.ansi`` to be enabled in your Sphinx ``extensions`` list.
+    If this integration is unavailable (package missing or extension not
+    enabled), a warning is logged and ANSI escape sequences are stripped from
+    the output block.
 
 Support
 =======
@@ -298,20 +298,20 @@ Development
 
 The source code is hosted on Github_::
 
-   git clone https://github.com/NextThought/sphinxcontrib-programoutput
+   git clone https://github.com/OpenNTI/sphinxcontrib-programoutput
 
 Please fork the repository and send pull requests with your fixes or features,
 but respect these guidelines:
 
 - Read `how to properly contribute to open source projects on GitHub
-  <https://gun.io/blog/how-to-github-fork-branch-and-pull-request/>`_.
+  <https://gun.io/news/2017/01/how-to-github-fork-branch-and-pull-request/>`_.
 - Use a topic branch to easily amend a pull request later, if necessary.
 - Write `good commit messages
   <https://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html>`_.
 - Squash commits on the topic branch before opening a pull request.
 - Respect :pep:`8` (use `pep8`_ to check your coding style compliance)
 - Add unit tests.
-- Open a `new pull request <https://help.github.com/articles/using-pull-requests>`_
+- Open a `new pull request <https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-pull-requests>`_
   that relates to but one subject with a clear title and description in
   grammatically correct, complete sentences.
 
@@ -337,10 +337,10 @@ License
 
 
 .. _Sphinx: https://www.sphinx-doc.org/en/master/
-.. _PyPI: https://pypi.python.org/pypi/sphinxcontrib-programoutput
+.. _PyPI: https://pypi.org/project/sphinxcontrib-programoutput
 .. _github: https://github.com/OpenNTI/sphinxcontrib-programoutput
 .. _readme: https://github.com/OpenNTI/sphinxcontrib-programoutput/blob/master/README.rst
 .. _format string: https://docs.python.org/2/library/string.html#formatstrings
 .. _issue tracker: https://github.com/OpenNTI/sphinxcontrib-programoutput/issues
-.. _pep8: https://pypi.python.org/pypi/pep8/
+.. _pep8: https://pypi.org/project/pep8/
 .. _MyST: https://myst-parser.readthedocs.io/en/latest/syntax/roles-and-directives.html
