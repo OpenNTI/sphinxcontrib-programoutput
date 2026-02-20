@@ -2,7 +2,7 @@
  Changes
 =========
 
-0.19 (unreleased)
+0.19 (2026-02-20)
 =================
 
 - Reintroduce ANSI output integration through the
