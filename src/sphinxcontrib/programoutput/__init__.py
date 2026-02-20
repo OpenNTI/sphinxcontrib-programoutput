@@ -50,7 +50,7 @@ from docutils.parsers.rst.directives import unchanged
 from docutils.statemachine import StringList
 from sphinx.util import logging as sphinx_logging
 
-__version__ = '0.19'
+__version__ = '0.20.dev0'
 
 logger = sphinx_logging.getLogger('contrib.programoutput')
 
