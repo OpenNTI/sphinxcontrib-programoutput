@@ -69,6 +69,14 @@ setup(
     long_description=read_desc(),
     keywords="sphinx cli command output program example",
     zip_safe=False,
+    project_urls={
+        'Homepage': "https://sphinxcontrib-programoutput.readthedocs.io/en/latest/",
+        'Documentation': "https://sphinxcontrib-programoutput.readthedocs.io/en/latest/",
+        "Repository": "https://github.com/OpenNTI/sphinxcontrib-programoutput/",
+        "Issues": "https://github.com/OpenNTI/sphinxcontrib-programoutput/issues",
+        "Changelog":
+            "https://github.com/OpenNTI/sphinxcontrib-programoutput/blob/master/CHANGES.rst",
+    },
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
