@@ -487,6 +487,8 @@ U+2264 \u2264 LESS-THAN OR EQUAL TO\n\u2264 line2\n..."""
     .. program-output:: python -c 'print("\\x1b[31mspam\\x1b[0m")'""",
                   programoutput_use_ansi=True,
                   extensions=['sphinxcontrib.programoutput', 'erbsland.sphinx.ansi'])
+    @unittest.skipIf(sys.version_info[:2] < (3, 10),
+                     "The extension is only available on 3.10+")
     def test_use_ansi_enabled_extension(self):
         with Patch('sphinxcontrib.programoutput.logger.warning') as patch_warning:
             doctree = self.doctree
