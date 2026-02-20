@@ -32,21 +32,22 @@
 
     .. moduleauthor::  Sebastian Wiesner  <lunaryorn@gmail.com>
 """
-
-from __future__ import print_function, division, absolute_import
-
-import sys
 import os
-import shlex
 import re
-from subprocess import Popen, PIPE, STDOUT
-from collections import defaultdict, namedtuple
+import shlex
+import sys
+from collections import defaultdict
+from collections import namedtuple
+from subprocess import PIPE
+from subprocess import STDOUT
+from subprocess import Popen
 
 from docutils import nodes
 from docutils.parsers import rst
-from docutils.parsers.rst.directives import flag, unchanged, nonnegative_int
+from docutils.parsers.rst.directives import flag
+from docutils.parsers.rst.directives import nonnegative_int
+from docutils.parsers.rst.directives import unchanged
 from docutils.statemachine import StringList
-
 from sphinx.util import logging as sphinx_logging
 
 __version__ = '0.19.dev0'
@@ -106,7 +107,7 @@ def _create_output_node(output, use_ansi, app=None):
 
     try:
         from erbsland.sphinx.ansi.parser import ANSILiteralBlock
-    except ImportError:
+    except ImportError: # pragma: no cover
         logger.warning(
             "programoutput_use_ansi is enabled, but erbsland ANSI support is "
             "not available. Stripping ANSI escape codes instead. Install "

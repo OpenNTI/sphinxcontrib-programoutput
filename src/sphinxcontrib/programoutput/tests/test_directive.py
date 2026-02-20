@@ -29,9 +29,10 @@ import sys
 import unittest
 from unittest.mock import patch as Patch
 
-
-from docutils.nodes import caption, container, literal_block, system_message
-
+from docutils.nodes import caption
+from docutils.nodes import container
+from docutils.nodes import literal_block
+from docutils.nodes import system_message
 from sphinxcontrib.programoutput import Command
 
 from . import AppMixin
@@ -42,6 +43,8 @@ def with_content(content, **kwargs):
     Always use a bare 'python' in the *content* string.
 
     It will be replaced with ``sys.executable``.
+
+    Keyword arguments go directly into the Sphinx configuration.
     """
     if 'python' in content:
         # XXX: This probably breaks if there are spaces in sys.executable.
@@ -439,7 +442,6 @@ U+2264 \u2264 LESS-THAN OR EQUAL TO\n\u2264 line2\n..."""
         self.assert_output(self.doctree, 'spam', caption='mycaption', name='myname')
         self.assert_cache(self.app, 'echo spam', 'spam')
 
-
     @with_content("""\
     .. program-output:: python -c 'import json; d = {"foo": "bar"}; print(json.dumps(d))'
        :language: json""",
@@ -449,7 +451,6 @@ U+2264 \u2264 LESS-THAN OR EQUAL TO\n\u2264 line2\n..."""
         self.assertTrue(literal)
         self.assertEqual(literal.astext(), '{"foo": "bar"}')
         self.assertEqual(literal["language"], "json")
-
 
     @with_content("""\
     .. program-output:: echo spam""",
@@ -464,11 +465,10 @@ U+2264 \u2264 LESS-THAN OR EQUAL TO\n\u2264 line2\n..."""
         self.assertTrue(create_output_node.call_args.args[1])
         self.assert_cache(self.app, 'echo spam', 'spam')
 
-
     @with_content("""\
     .. program-output:: python -c 'print("\\x1b[31mspam\\x1b[0m")'""",
                   programoutput_use_ansi=True)
-    def test_use_ansi_missing_dependency(self):
+    def test_use_ansi_missing_extension(self):
         with Patch('sphinxcontrib.programoutput.logger.warning') as patch_warning:
             doctree = self.doctree
 
@@ -476,12 +476,28 @@ U+2264 \u2264 LESS-THAN OR EQUAL TO\n\u2264 line2\n..."""
         patch_warning.assert_called_once()
         warning = patch_warning.call_args.args[0]
         self.assertIn('programoutput_use_ansi is enabled', warning)
+        self.assertIn("but 'erbsland.sphinx.ansi' is not enabled", warning)
         self.assert_cache(
             self.app,
             sys.executable + " -c 'print(\"\\x1b[31mspam\\x1b[0m\")'",
             '\x1b[31mspam\x1b[0m'
         )
 
+    @with_content("""\
+    .. program-output:: python -c 'print("\\x1b[31mspam\\x1b[0m")'""",
+                  programoutput_use_ansi=True,
+                  extensions=['sphinxcontrib.programoutput', 'erbsland.sphinx.ansi'])
+    def test_use_ansi_enabled_extension(self):
+        with Patch('sphinxcontrib.programoutput.logger.warning') as patch_warning:
+            doctree = self.doctree
+
+        self.assert_output(doctree, '\x1b[31mspam\x1b[0m')
+        patch_warning.assert_not_called()
+        self.assert_cache(
+            self.app,
+            sys.executable + " -c 'print(\"\\x1b[31mspam\\x1b[0m\")'",
+            '\x1b[31mspam\x1b[0m'
+        )
 
 def test_suite():
     return unittest.defaultTestLoader.loadTestsFromName(__name__)
