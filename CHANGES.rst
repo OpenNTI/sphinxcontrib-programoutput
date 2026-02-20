@@ -5,7 +5,13 @@
 0.19 (unreleased)
 =================
 
-- Nothing changed yet.
+- Reintroduce ANSI output integration through the
+  ``programoutput_use_ansi`` configuration value. When enabled,
+  command output is emitted as an ANSI-aware literal block for
+  processing by the `erbsland.sphinx.ansi
+  <https://pypi.org/project/erbsland-sphinx-ansi/>`_ extension. Note
+  that this extension and thus ANSI support is only available on
+  Python 3.10 and newer.
 
 
 0.18 (2024-12-06)

@@ -32,20 +32,22 @@
 
     .. moduleauthor::  Sebastian Wiesner  <lunaryorn@gmail.com>
 """
-
-from __future__ import print_function, division, absolute_import
-
-import sys
 import os
+import re
 import shlex
-from subprocess import Popen, PIPE, STDOUT
-from collections import defaultdict, namedtuple
+import sys
+from collections import defaultdict
+from collections import namedtuple
+from subprocess import PIPE
+from subprocess import STDOUT
+from subprocess import Popen
 
 from docutils import nodes
 from docutils.parsers import rst
-from docutils.parsers.rst.directives import flag, unchanged, nonnegative_int
+from docutils.parsers.rst.directives import flag
+from docutils.parsers.rst.directives import nonnegative_int
+from docutils.parsers.rst.directives import unchanged
 from docutils.statemachine import StringList
-
 from sphinx.util import logging as sphinx_logging
 
 __version__ = '0.19.dev0'
@@ -82,6 +84,39 @@ def _slice(value):
     if len(parts) > 2:
         raise ValueError('too many slice parts')
     return tuple((parts + [None] * 2)[:2])
+
+
+_ANSI_FORMAT_SEQUENCE = re.compile(r'\x1b\[[^m]+m')
+
+
+def _strip_ansi_formatting(text):
+    return _ANSI_FORMAT_SEQUENCE.sub('', text)
+
+
+def _create_output_node(output, use_ansi, app=None):
+    if not use_ansi:
+        return nodes.literal_block(output, output)
+
+    if app is not None and 'erbsland.sphinx.ansi' not in app.extensions:
+        logger.warning(
+            "programoutput_use_ansi is enabled, but 'erbsland.sphinx.ansi' "
+            "is not enabled. Stripping ANSI escape codes instead."
+        )
+        stripped_output = _strip_ansi_formatting(output)
+        return nodes.literal_block(stripped_output, stripped_output)
+
+    try:
+        from erbsland.sphinx.ansi.parser import ANSILiteralBlock
+    except ImportError: # pragma: no cover
+        logger.warning(
+            "programoutput_use_ansi is enabled, but erbsland ANSI support is "
+            "not available. Stripping ANSI escape codes instead. Install "
+            "'erbsland-sphinx-ansi' and enable 'erbsland.sphinx.ansi' to "
+            "render ANSI output."
+        )
+        stripped_output = _strip_ansi_formatting(output)
+        return nodes.literal_block(stripped_output, stripped_output)
+    return ANSILiteralBlock(output, output)
 
 
 class ProgramOutputDirective(rst.Directive):
@@ -308,13 +343,9 @@ def run_programs(app, doctree):
                     returncode=returncode
                 )
 
-            # The node_class used to be switchable to
-            # `sphinxcontrib.ansi.ansi_literal_block` if
-            # `app.config.programoutput_use_ansi` was set. But
-            # sphinxcontrib.ansi is no longer available on PyPI, so we
-            # can't test that. And if we can't test it, we can't
-            # support it.
-            new_node = nodes.literal_block(output, output)
+            new_node = _create_output_node(
+                output, app.config.programoutput_use_ansi, app
+            )
             new_node['language'] = node['language']
             node.replace_self(new_node)
 
@@ -335,6 +366,7 @@ def init_cache(app):
 def setup(app):
     app.add_config_value('programoutput_prompt_template',
                          '$ {command}\n{output}', 'env')
+    app.add_config_value('programoutput_use_ansi', False, 'env')
     app.add_directive('program-output', ProgramOutputDirective)
     app.add_directive('command-output', ProgramOutputDirective)
     app.connect('builder-inited', init_cache)

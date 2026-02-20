@@ -239,6 +239,10 @@ Reference
    .. versionchanged:: 0.18
       Add the ``language`` option.
 
+   .. versionchanged:: 0.19
+      Reintroduce ANSI support via :confval:`programoutput_use_ansi`
+      using the ``erbsland.sphinx.ansi`` extension.
+
 .. directive:: command-output
 
    Same as :dir:`program-output`, but with enabled ``prompt`` option.
@@ -264,6 +268,18 @@ This extension understands the following configuration options:
    * ``output`` is the output of the command, after the ``ellipsis`` option has
      been applied.
    * ``returncode`` is the return code of the command as integer.
+
+.. confval:: programoutput_use_ansi
+
+    A boolean that defaults to ``False``. If set to ``True``, generated output
+    blocks are emitted as ``erbsland.sphinx.ansi.parser.ANSILiteralBlock`` so
+    ANSI escape sequences can be rendered by ``erbsland.sphinx.ansi``.
+
+    This requires both the ``erbsland-sphinx-ansi`` package to be installed and
+   ``erbsland.sphinx.ansi`` to be enabled in your Sphinx ``extensions`` list.
+   If this integration is unavailable (package missing or extension not
+   enabled), a warning is logged and ANSI escape sequences are stripped from
+   the output block.
 
 Support
 =======
