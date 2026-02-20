@@ -31,15 +31,13 @@ jobs:
         cache-dependency-path: 'setup.py'
     - name: Install dependencies
       run: |
-        python -m pip install -U pip setuptools wheel
-        python -m pip install -U coverage zope.testrunner
-        python -m pip install -U -e ".[test]"
+        python -m pip install -U pip
+        python -m pip install -U tox
     - name: Test
       run: |
-        coverage run -m zope.testrunner --test-path=src
-        coverage report
+        tox -v -e py
     - name: Lint
       if: matrix.python-version == '3.12'
       run: |
-        python -m pip install -U pylint
+        python -m pip install -U pylint ".[test]"
         pylint src
