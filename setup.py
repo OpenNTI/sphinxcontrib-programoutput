@@ -103,6 +103,7 @@ setup(
     package_dir={'': 'src'},
     include_package_data=True,
     install_requires=[
+        'docutils',
         'Sphinx>=5.0.0',
     ],
     extras_require={

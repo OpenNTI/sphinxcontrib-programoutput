@@ -25,6 +25,7 @@
 
 from __future__ import print_function, division, absolute_import
 
+from importlib import metadata
 import unittest
 from . import AppMixin
 
@@ -38,6 +39,12 @@ class TestSetup(AppMixin,
         app = self.app
         self.assertIsInstance(app.env.programoutput_cache, ProgramOutputCache)
         self.assertFalse(app.env.programoutput_cache)
+
+
+    def test_docutils_is_a_direct_dependency(self):
+        requirements = metadata.requires('sphinxcontrib-programoutput')
+
+        self.assertIn('docutils', requirements or ())
 
 def test_suite():
     return unittest.defaultTestLoader.loadTestsFromName(__name__)
