@@ -116,7 +116,7 @@ def _create_output_node(output, use_ansi, app=None):
         )
         stripped_output = _strip_ansi_formatting(output)
         return nodes.literal_block(stripped_output, stripped_output)
-    return ANSILiteralBlock(output, output)
+    return ANSILiteralBlock(output)
 
 
 class ProgramOutputDirective(rst.Directive):
