@@ -2,7 +2,7 @@
  Changes
 =========
 
-0.20 (unreleased)
+0.20 (2026-06-16)
 =================
 
 - Stop testing Python 3.8 and 3.9. Only 3.10 and above are supported.
