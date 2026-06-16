@@ -11,6 +11,9 @@
 - Explicitly list ``docutils`` as a dependency.
 - Add the ability to specify a ``:class:`` argument to set CSS classes
   on programoutput nodes.
+- [Internal] Convert static project metadata to ``pyproject.toml``.
+- [Internal] Clarify conflicting licensing statements by setting them
+  all to the original BSD 2 Clause license.
 
 
 0.19 (2026-02-20)
