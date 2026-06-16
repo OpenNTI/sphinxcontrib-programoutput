@@ -482,6 +482,39 @@ U+2264 \u2264 LESS-THAN OR EQUAL TO\n\u2264 line2\n..."""
             '\x1b[31mspam\x1b[0m'
         )
 
+    @with_content("""\
+    .. program-output:: echo spam
+       :class: myclass""")
+    def test_class(self):
+        literal = self.doctree.next_node(literal_block)
+        self.assertTrue(literal)
+        self.assertIn('myclass', literal.get('classes'))
+        self.assert_output(self.doctree, 'spam')
+        self.assert_cache(self.app, 'echo spam', 'spam')
+
+    @with_content("""\
+    .. program-output:: echo spam
+       :class: myclass anotherclass""")
+    def test_multiple_classes(self):
+        literal = self.doctree.next_node(literal_block)
+        self.assertTrue(literal)
+        classes = literal.get('classes')
+        self.assertIn('myclass', classes)
+        self.assertIn('anotherclass', classes)
+        self.assert_output(self.doctree, 'spam')
+        self.assert_cache(self.app, 'echo spam', 'spam')
+
+    @with_content("""\
+    .. program-output:: echo spam
+       :class: myclass
+       :caption: mycaption""")
+    def test_class_with_caption(self):
+        container_node = self.doctree.next_node(container)
+        self.assertTrue(container_node)
+        self.assertIn('myclass', container_node.get('classes'))
+        self.assert_output(self.doctree, 'spam', caption='mycaption')
+        self.assert_cache(self.app, 'echo spam', 'spam')
+
 def test_suite():
     return unittest.defaultTestLoader.loadTestsFromName(__name__)
 

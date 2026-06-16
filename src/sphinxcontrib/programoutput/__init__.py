@@ -128,7 +128,7 @@ class ProgramOutputDirective(rst.Directive):
                        ellipsis=_slice, extraargs=unchanged,
                        returncode=nonnegative_int, cwd=unchanged,
                        caption=unchanged, name=unchanged,
-                       language=unchanged)
+                       language=unchanged, **{'class': unchanged})
 
     def run(self):
         env = self.state.document.settings.env
@@ -151,9 +151,16 @@ class ProgramOutputDirective(rst.Directive):
         node['language'] = self.options.get('language', 'text')
         if 'ellipsis' in self.options:
             node['strip_lines'] = self.options['ellipsis']
+
+        classes = self.options.get('class', '').split() if 'class' in self.options else []
+        if classes:
+            node['classes'] = classes
+
         if 'caption' in self.options:
             caption = self.options['caption'] or self.arguments[0]
             node = _container_wrapper(self, node, caption)
+            if classes:
+                node['classes'].extend(classes)
 
         self.add_name(node)
         return [node]
@@ -347,6 +354,8 @@ def run_programs(app, doctree):
                 output, app.config.programoutput_use_ansi, app
             )
             new_node['language'] = node['language']
+            if 'classes' in node:
+                new_node['classes'].extend(node['classes'])
             node.replace_self(new_node)
 
 
