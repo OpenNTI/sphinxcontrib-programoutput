@@ -1,3 +1,76 @@
 [build-system]
-requires = ["setuptools"]
+requires = ["setuptools>=61"]
 build-backend = "setuptools.build_meta"
+
+[project]
+name = "sphinxcontrib-programoutput"
+description = "Sphinx extension to include program output"
+readme = "README.rst"
+requires-python = ">=3.10"
+license = "BSD-2-Clause"
+license-files = [
+  'LICENSE',
+]
+keywords = ["sphinx", "cli", "command", "output", "program", "example"]
+authors = [{name = "Sebastian Wiesner", email = "lunaryorn@gmail.com"}]
+maintainers = [{name = "Jason Madden", email = "jason@seecoresoftware.com"}]
+dependencies = [
+    "Sphinx >= 5.0.0",
+    "docutils",
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Programming Language :: Python :: Implementation :: PyPy",
+    "Topic :: Documentation",
+    "Topic :: Utilities",
+    "Framework :: Sphinx",
+    "Framework :: Sphinx :: Extension",
+]
+dynamic = ["version"]
+
+[project.optional-dependencies]
+test = [
+    # Sphinx 8.1 stopped raising SphinxWarning when the ``logger.warning``
+    # method is invoked. So we now have to test side effects.
+    # That's OK, and the same side effect test works on older
+    # versions as well.
+    "erbsland-sphinx-ansi >= 1.2.4",
+]
+docs = [
+    "furo",
+]
+ansi = [
+    "erbsland-sphinx-ansi >= 1.2.4",
+]
+
+[project.urls]
+Homepage = "https://sphinxcontrib-programoutput.readthedocs.io/en/latest/"
+Documentation = "https://sphinxcontrib-programoutput.readthedocs.io/en/latest/"
+Repository = "https://github.com/OpenNTI/sphinxcontrib-programoutput/"
+Issues = "https://github.com/OpenNTI/sphinxcontrib-programoutput/issues"
+Changelog = "https://github.com/OpenNTI/sphinxcontrib-programoutput/blob/master/CHANGES.rst"
+
+[tool.setuptools]
+zip-safe = false
+include-package-data = true
+platforms = ["any"]
+
+[tool.setuptools.dynamic]
+version = {attr = "sphinxcontrib.programoutput.__version__"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+namespaces = true
+
+[tool.zest-releaser]
+python-file-with-version = "src/sphinxcontrib/programoutput/__init__.py"
