@@ -53,7 +53,7 @@ tests_require = [
     # method is invoked. So we now have to test side effects.
     # That's OK, and the same side effect test works on older
     # versions as well.
-    "erbsland-sphinx-ansi; python_version >= '3.10'",
+    "erbsland-sphinx-ansi >= 1.2.4",
 ]
 
 setup(
@@ -84,8 +84,6 @@ setup(
         'Operating System :: OS Independent',
         'Programming Language :: Python',
         'Programming Language :: Python :: 3 :: Only',
-        "Programming Language :: Python :: 3.8",
-        "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
@@ -103,13 +101,17 @@ setup(
     package_dir={'': 'src'},
     include_package_data=True,
     install_requires=[
-        'Sphinx>=5.0.0',
+        'Sphinx >= 5.0.0',
+        'docutils',
     ],
     extras_require={
         'test': tests_require,
         'docs': [
             'furo',
         ],
+        'ansi': [
+            "erbsland-sphinx-ansi >= 1.2.4",
+        ],
     },
-    python_requires=">=3.8",
+    python_requires=">=3.10",
 )

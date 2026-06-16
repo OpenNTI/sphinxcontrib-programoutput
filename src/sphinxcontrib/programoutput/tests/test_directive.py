@@ -71,9 +71,19 @@ class TestDirective(AppMixin,
     # pylint:disable=too-many-public-methods
     def assert_output(self, doctree, output, **kwargs):
         __tracebackhide__ = True
-        literal = doctree.next_node(literal_block)
-        self.assertTrue(literal)
-        self.assertEqual(literal.astext(), output)
+        # Sometime around 1.2.4, erpsland-sphinx-ansi changed from being a
+        # ``literal_block`` to being a ``container``, and its astext()
+        # stopped being the
+        # See
+        #    https://github.com/erbsland-dev/erbsland-sphinx-ansi
+        #    /commit/f9b2481b65ac4df208bc0dc47b433ecefbbb0701
+        #    #diff-501301f0162ce64234424c0fa1e1b56724e0d526c3d364d9db3ddc19931f2a27
+        using_ansi = kwargs.get('ansi')
+        literal = doctree.next_node(literal_block
+                                    if not using_ansi
+                                    else container)
+        self.assertTrue(literal, (literal, output))
+        self.assertEqual(literal.astext() if not using_ansi else literal.rawsource, output)
 
         if 'caption' in kwargs:
             caption_node = doctree.next_node(caption)
@@ -106,7 +116,6 @@ class TestDirective(AppMixin,
         self.assert_output(self.doctree, 'eggs')
         self.assert_cache(self.app, 'echo eggs', 'eggs')
 
-
     @with_content("""\
     .. program-output:: python -c 'print("spam with eggs")'""")
     def test_with_spaces(self):
@@ -120,7 +129,6 @@ class TestDirective(AppMixin,
         self.assert_cache(self.app, sys.executable + ' -c \'print("spam with eggs")\'',
                           'spam with eggs')
 
-
     @with_content("""\
     .. program-output:: python -c 'import sys; sys.stderr.write("spam with eggs")'
                               """)
@@ -129,17 +137,6 @@ class TestDirective(AppMixin,
         self.assert_output(self.doctree, output)
         cmd = sys.executable + ' -c \'import sys; sys.stderr.write("spam with eggs")\''
         self.assert_cache(self.app, cmd, output)
-
-
-    @with_content("""\
-    .. program-output:: python -V
-       :nostderr:""")
-    @unittest.skipIf(sys.version_info[0] > 2,
-                     reason="Python 3 prints version to stdout, not stderr")
-    def test_standard_error_disabled(self):
-        self.assert_output(self.doctree, '')
-        self.assert_cache(self.app, sys.executable + ' -V', '', hide_standard_error=True)
-
 
     @with_content("""\
     .. program-output:: python -c 'import os; print(os.getcwd())'""")
@@ -170,7 +167,6 @@ class TestDirective(AppMixin,
         self.assert_cache(self.app, sys.executable + " -c 'import os; print(os.getcwd())'", output,
                           working_directory=str(contentdir))
 
-
     @with_content("""\
 .. program-output:: echo "${PWD}"
        :shell:
@@ -183,12 +179,10 @@ class TestDirective(AppMixin,
         self.assert_cache(self.app, 'echo "${PWD}"', output, use_shell=True,
                           working_directory=str(contentdir))
 
-
     @with_content('.. program-output:: echo "${HOME}"')
     def test_no_expansion_without_shell(self):
         self.assert_output(self.doctree, '${HOME}')
         self.assert_cache(self.app, 'echo "${HOME}"', '${HOME}')
-
 
     @with_content("""\
     .. program-output:: echo "${HOME}"
@@ -196,7 +190,6 @@ class TestDirective(AppMixin,
     def test_expansion_with_shell(self):
         self.assert_output(self.doctree, os.environ['HOME'])
         self.assert_cache(self.app, 'echo "${HOME}"', os.environ['HOME'], use_shell=True)
-
 
     @with_content("""\
     .. program-output:: echo "spam with eggs"
@@ -207,14 +200,12 @@ $ echo "spam with eggs"
 spam with eggs""")
         self.assert_cache(self.app, 'echo "spam with eggs"', 'spam with eggs')
 
-
     @with_content('.. command-output:: echo "spam with eggs"')
     def test_command(self):
         self.assert_output(self.doctree, """\
 $ echo "spam with eggs"
 spam with eggs""")
         self.assert_cache(self.app, 'echo "spam with eggs"', 'spam with eggs')
-
 
     @with_content('.. command-output:: echo spam',
                   programoutput_prompt_template='>> {command}\n<< {output}')
@@ -256,7 +247,6 @@ spam with eggs""")
         self.assert_cache(self.app, sys.executable + ' -c \'print("spam\\nwith\\neggs")\'',
                           'spam\nwith\neggs')
 
-
     @with_content("""\
     .. program-output:: python -c 'print("spam\\nwith\\neggs")'
        :ellipsis: -2""")
@@ -265,7 +255,6 @@ spam with eggs""")
         self.assert_cache(self.app,
                           sys.executable + """ -c 'print("spam\\nwith\\neggs")'""",
                           'spam\nwith\neggs')
-
 
     @with_content("""\
     .. program-output:: python -c 'print("spam\\nwith\\neggs")'
@@ -276,7 +265,6 @@ spam with eggs""")
                           sys.executable + """ -c 'print("spam\\nwith\\neggs")'""",
                           'spam\nwith\neggs')
 
-
     @with_content("""\
     .. program-output:: python -c 'print("spam\\nwith\\neggs")'
        :ellipsis: 1, -1""")
@@ -285,7 +273,6 @@ spam with eggs""")
         self.assert_cache(self.app,
                           sys.executable + """ -c 'print("spam\\nwith\\neggs")'""",
                           'spam\nwith\neggs')
-
 
     @with_content("""\
     .. program-output:: python -c 'import sys; sys.exit(1)'""",
@@ -301,8 +288,6 @@ spam with eggs""")
         parsed_command = (sys.executable, '-c', 'import sys; sys.exit(1)')
         self.assertIn(repr(parsed_command), repr(command))
 
-
-
     @with_content("""\
     .. program-output:: python -c 'import sys; sys.exit("some output")'
        :shell:""",
@@ -317,7 +302,6 @@ spam with eggs""")
                       msg)
         # Python 2 include the u'' prefix on the output string.
         self.assertEqual('some output', output)
-
 
     @with_content("""\
     .. program-output:: python -c 'import sys; print("foo"); sys.exit(1)'
@@ -396,7 +380,6 @@ U+2264 ≤ LESS-THAN OR EQUAL TO""")
             self.app,
             'echo "U+2264 ≤ LESS-THAN OR EQUAL TO"',
             'U+2264 ≤ LESS-THAN OR EQUAL TO')
-
 
     @with_content("""\
     .. program-output:: python -c 'print("U+2264 ≤ LESS-THAN OR EQUAL TO\\n≤ line2\\n≤ line3")'
@@ -487,13 +470,11 @@ U+2264 \u2264 LESS-THAN OR EQUAL TO\n\u2264 line2\n..."""
     .. program-output:: python -c 'print("\\x1b[31mspam\\x1b[0m")'""",
                   programoutput_use_ansi=True,
                   extensions=['sphinxcontrib.programoutput', 'erbsland.sphinx.ansi'])
-    @unittest.skipIf(sys.version_info[:2] < (3, 10),
-                     "The extension is only available on 3.10+")
     def test_use_ansi_enabled_extension(self):
         with Patch('sphinxcontrib.programoutput.logger.warning') as patch_warning:
             doctree = self.doctree
 
-        self.assert_output(doctree, '\x1b[31mspam\x1b[0m')
+        self.assert_output(doctree, '\x1b[31mspam\x1b[0m', ansi=True)
         patch_warning.assert_not_called()
         self.assert_cache(
             self.app,
