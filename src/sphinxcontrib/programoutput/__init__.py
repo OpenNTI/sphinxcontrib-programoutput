@@ -167,7 +167,7 @@ class ProgramOutputDirective(rst.Directive):
 
 
 _Command = namedtuple(
-    'Command', 'command shell hide_standard_error working_directory')
+    '_Command', 'command shell hide_standard_error working_directory')
 
 
 class Command(_Command):
@@ -191,14 +191,7 @@ class Command(_Command):
 
     @staticmethod
     def __normalize_command(command, shell): # pylint:disable=unused-private-member
-        # Returns either a native string, to a tuple.
-        if (bytes is str
-                and not isinstance(command, str)
-                and hasattr(command, 'encode')):
-            # Python 2, given a unicode string
-            command = command.encode(sys.getfilesystemencoding())
-            assert isinstance(command, str)
-
+        # Returns either a native string, or a tuple.
         if not shell and isinstance(command, str):
             command = shlex.split(command)
 
