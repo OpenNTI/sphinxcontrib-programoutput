@@ -5,7 +5,10 @@
 0.20 (unreleased)
 =================
 
-- Nothing changed yet.
+- Stop testing Python 3.8 and 3.9. Only 3.10 and above are supported.
+- Add an ``ansi`` extra to install ``erbsland-sphinx-ansi``. Version
+  1.2.4 or later is required.
+- Explicitly list ``docutils`` as a dependency.
 
 
 0.19 (2026-02-20)
