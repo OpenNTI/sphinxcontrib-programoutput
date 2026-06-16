@@ -243,6 +243,13 @@ Reference
       Reintroduce ANSI support via :confval:`programoutput_use_ansi`
       using the ``erbsland.sphinx.ansi`` extension.
 
+   A ``class`` option can be given to specify CSS classes to apply to
+   the output. The value is a whitespace separated list of CSS class
+   names.
+
+   .. versionchanged:: 0.20
+      Add the ``class`` option.
+
 .. directive:: command-output
 
    Same as :dir:`program-output`, but with enabled ``prompt`` option.
